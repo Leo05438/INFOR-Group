@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+	ul {
+	    list-style-type: none;
+	    margin: 0;
+	    padding: 0;
+	    overflow: hidden;
+	    background-color: #F3F3F3;
+	}
+
+	li {
+	    float: left;
+	}
+
+	li a {
+	    display: block;
+	    color: #666;
+	    text-align: center;
+	    padding: 14px 16px;
+	    text-decoration: none;
+	}
+
+	li a:hover:not(.active) {
+	    background-color: #ddd;
+	}
+	.aa{width:100px; height:30px; boder:solid 1px #f00;}
+	.active {
+	    color: white;
+	    background-color: #008CBA;
+	}
+	#quee {
+		display: inline;
+	}
+</style>
+</head>
+<body>
+
+<ul>
+  <li><a href="#icon">icon</a></li>
+  <li><a href="#news">News</a></li>
+  <input type="text" class="aa" /><input type="button" value="search" />
+  <li style="float:right"><a href="#login">Log in</a></li>
+  <li style="float:right"><a class="active" href="#signup">Sign up</a></li>
+</ul>
+<a id="quee" style="font-size: 30px;float: left;">Questions </a>
+		<form style="float: left;">
+			<select name="que">
+			　<option value="adddate">add date</option>
+			　<option value="hot">hot</option>
+			　<option value="week">week</option>
+			　<option value="month">month</option>
+			</select>
+		</form>
+<button id="quee" style="float: right;"><a href="#ask">Ask Question</a></button>
+<br>
+<br>
+<a href="ques1" style="font-size: 20px"> aaa </a>
+</body>
+</html>
