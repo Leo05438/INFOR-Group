@@ -25,9 +25,12 @@
         </activity>
         <activity
             android:name=".MenuActivity"
-            android:label="@string/title_activity_menu"
+            android:label=""
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".PersonalProfilePage"></activity>
+        <activity
+            android:name=".PersonalProfilePage"
+            android:label=""
+            android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>
