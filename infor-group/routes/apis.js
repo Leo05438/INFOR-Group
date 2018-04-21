@@ -33,8 +33,7 @@ router.post('/loginr', function(req, res, next) {
           req.session.logined = true
           new Users({
               username: req.session.name,
-              passwd: req.session.passwd,
-              score:0,
+              passwd: req.session.passwd
           }).save( function( err ){
               if (err) {
                   console.log('Fail to save to DB.')
@@ -56,7 +55,7 @@ router.post('/login', function(req, res, next) {
       console.log('資料不完整')
       req.session.rlErro = 1
       req.session.rlErroType = 1
-      res.redirect('/users/register')
+      res.redirect('/users/signin')
       return
     }
 
@@ -93,18 +92,4 @@ router.post('/login', function(req, res, next) {
     })
 })
 
-router.post('/score', function(req, res, next) {
- Users.find({ username: req.session.name }, function ( err, user ) {
-   if (err) throw err;
-   if (user.score>=req.body.score) {
-     res.redirect('/')
-     return
-   }
-   Users.findOneAndUpdate({ username: req.session.name }, { score: req.body.score }, function ( err, user ) {
-     if (err) throw err;
-     res.redirect('/')
-     return
-   })
- })
-})
 module.exports = router

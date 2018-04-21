@@ -3,8 +3,7 @@ var Schema = mongoose.Schema;
 
 var userSchema = new Schema({
   username: String,
-  passwd: String,
-	score: Number
+  passwd: String
   },
   {
     versionKey: false // You should be aware of the outcome after set to false
@@ -12,4 +11,4 @@ var userSchema = new Schema({
 
 mongoose.model( 'User' , userSchema);
 mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://localhost/work');
+mongoose.connect('mongodb://localhost/infor-group');

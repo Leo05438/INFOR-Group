@@ -9,7 +9,7 @@
       <input type="text" name="user" placeholder='使用者名稱'>
       <input type="password" name="passwd" placeholder='密碼'>
       <% if(rlErro == 1){
-        if(rlErroType == 1){ %><p>資料不完整，去註冊吧</p><% }
+        if(rlErroType == 1){ %><p>資料不完整，請重新輸入</p><% }
         if(rlErroType == 2){ %><p>名稱已被使用，改一個吧</p><% }
         if(rlErroType == 3){ %><p>密碼錯誤，請先註冊</p><% }
         if(rlErroType == 4){ %><p>名稱不存在，請先註冊</p><% }

@@ -8,6 +8,9 @@
     <form class="" action="/apis/login" method="post" name="login">
       <input type="text" name="user" placeholder="名稱">
       <input type="password" name="passwd" placeholder="密碼">
+      <% if(rlErro == 1){
+        if(rlErroType == 1){ %><p>資料不完整，請重新輸入</p><% }
+      } %>
       <input type="submit" name="submit" value="登入">
     </form>
     <a href="/">主頁</a>
