@@ -1,7 +1,13 @@
 package com.example.leolin.inforapp;
 
+import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.Build;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -9,14 +15,20 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,6 +44,16 @@ public class PersonalProfilePage extends AppCompatActivity {
     private SimpleAdapter mAdapter;
     private View item;
     private String username = "Your Current Username: ";
+    private int layoutHeight;
+    private int layoutWidth;
+    private final int GALLERY_ACTIVITY_CODE=200;
+    private final int RESULT_CROP = 400;
+    private ImageView image;
+
+    public static final int PICK_IMAGE = 1;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +71,8 @@ public class PersonalProfilePage extends AppCompatActivity {
                 finish();
             }
         });
+
+        image = (ImageView) findViewById(R.id.setting_photo_sticker);
 
         setAdaper();
         listViewItemClick();
@@ -84,13 +108,12 @@ public class PersonalProfilePage extends AppCompatActivity {
         Log.d("jizz",String.valueOf(pos));
         Intent intent = new Intent();
         AlertDialog.Builder builder = new AlertDialog.Builder(PersonalProfilePage.this);
-        // for 0
-        if(pos == 0) item = LayoutInflater.from(PersonalProfilePage.this).inflate(R.layout.dialog_username,null);
-        final TextView usernameText = (TextView) item.findViewById(R.id.dialog_text);
 
         switch(pos){
             case 0:
                 ///
+                item = LayoutInflater.from(PersonalProfilePage.this).inflate(R.layout.dialog_username,null);
+                TextView usernameText = (TextView) item.findViewById(R.id.dialog_text);
                 Log.d("JIZZZZZZZZZZ",usernameText.getText().toString());
                 usernameText.setText(username);
                 ///
@@ -116,6 +139,21 @@ public class PersonalProfilePage extends AppCompatActivity {
 
                 break;
             case 1:
+//                Intent mIntent = new Intent();
+//                mIntent.setType("image/*");
+//                mIntent.setAction(Intent.ACTION_GET_CONTENT);
+//                startActivityForResult(Intent.createChooser(mIntent, "Select Picture"), PICK_IMAGE);
+//                Intent getIntent = new Intent(Intent.ACTION_GET_CONTENT);
+//                getIntent.setType("image/*");
+//
+//                Intent pickIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//                pickIntent.setType("image/*");
+//
+//                Intent chooserIntent = Intent.createChooser(getIntent, "Select Image");
+//                chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[] {pickIntent});
+//                startActivityForResult(chooserIntent, PICK_IMAGE);
+                Intent gallery_Intent = new Intent(getApplicationContext(), PickFromGallery.class);
+                startActivityForResult(gallery_Intent, GALLERY_ACTIVITY_CODE);
                 break;
             case 2:
                 break;
@@ -128,5 +166,86 @@ public class PersonalProfilePage extends AppCompatActivity {
                 break;
         }
         //startActivity(intent);
+    }
+    @Override
+    protected void onActivityResult(int requestCode,int resultCode,Intent data){
+        super.onActivityResult(requestCode,resultCode,data);
+//        if(requestCode == PICK_IMAGE && data != null){
+//            try{
+//                Uri imageUri = data.getData();
+//                InputStream imageStream = getContentResolver().openInputStream(imageUri);
+//                Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
+//                ImageView imageView = (ImageView) findViewById(R.id.setting_photo_sticker);
+//
+//                int pWidth = selectedImage.getWidth();
+//                int pHeight = selectedImage.getHeight();
+//                Log.d("ImageWidth",String.valueOf(pWidth));
+//                Log.d("ImageHeight",String.valueOf(pHeight));
+//
+//                LinearLayout layout = (LinearLayout) findViewById(R.id.activity_personal_profile);
+//                layoutWidth = layout.getWidth();
+//                layoutHeight = layout.getHeight();
+//                Log.d("LayoutWidth",String.valueOf(layoutWidth));
+//                Log.d("LayoutHeight",String.valueOf(layoutHeight));
+//
+//                while(pWidth >= layoutWidth || pHeight >= layoutHeight){
+//                    pHeight = pHeight / 2;
+//                    pWidth = pWidth / 2;
+//                }
+//                Log.d("ScaledImageWidth",String.valueOf(pWidth));
+//                Log.d("ScaledImageHeight",String.valueOf(pHeight));
+//
+//                Bitmap scalemap = Bitmap.createScaledBitmap(selectedImage,pWidth,pHeight,false);
+//
+//
+//                /*ViewTreeObserver vto = layout.getViewTreeObserver();
+//                vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+//                    @Override
+//                    public void onGlobalLayout() {
+//                        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN){
+//                            this.layout.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+//                        } else {
+//                            this.layout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+//                        }
+//                    }
+//                    layoutWidth  = layout.getMeasuredWidth();
+//                    layoutHeight = layout.getMeasuredHeight();
+//                });*/
+//
+//                imageView.setImageBitmap(scalemap);
+//            } catch (FileNotFoundException e){
+//                e.printStackTrace();
+//            }
+//        }
+        if(requestCode == GALLERY_ACTIVITY_CODE && data != null && resultCode == Activity.RESULT_OK){
+            String imagePath = data.getStringExtra("PicturePath");
+            performCrop(imagePath);
+        } else if(requestCode == RESULT_CROP && resultCode == Activity.RESULT_OK){
+            Bundle extras = data.getExtras();
+            Bitmap bitmap = extras.getParcelable("data");
+
+            image.setScaleType(ImageView.ScaleType.FIT_XY);
+            image.setImageBitmap(bitmap);
+        }
+    }
+
+    public void performCrop(String picUri){
+        try{
+            Intent cropIntent = new Intent("com.android.camera.action.CROP");
+            File f = new File(picUri);
+            Uri contentUri = Uri.fromFile(f);
+
+            cropIntent.setDataAndType(contentUri,"image/*");
+            cropIntent.putExtra("crop","true");
+            cropIntent.putExtra("aspectX",1);
+            cropIntent.putExtra("aspectY",1);
+            cropIntent.putExtra("outputX",500);
+            cropIntent.putExtra("outputY",500);
+            cropIntent.putExtra("return-data",true);
+
+            startActivityForResult(cropIntent,RESULT_CROP);
+        } catch(ActivityNotFoundException anfe) {
+            anfe.printStackTrace();
+        }
     }
 }

@@ -31,6 +31,10 @@
             android:name=".PersonalProfilePage"
             android:label=""
             android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".PickFromGallery"
+            android:label=""
+            />
     </application>
 
 </manifest>
