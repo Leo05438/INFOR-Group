@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    <% if (username && authenticated) { %>
+      <a href="#">帳號管理</a>
+      <a href="/users/signout">登出</a>
+    <% } else { %>
+      <a href="/users/signin">登入</a>
+      <a href="/users/register">註冊</a>
+    <% } %>
+  </body>
+</html>
