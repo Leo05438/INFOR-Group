@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -44,6 +45,7 @@ public class PersonalProfilePage extends AppCompatActivity {
     private SimpleAdapter mAdapter;
     private View item;
     private String username = "Your Current Username: ";
+    private String password = "jizz7122";
     private int layoutHeight;
     private int layoutWidth;
     private final int GALLERY_ACTIVITY_CODE=200;
@@ -143,6 +145,7 @@ public class PersonalProfilePage extends AppCompatActivity {
 //                mIntent.setType("image/*");
 //                mIntent.setAction(Intent.ACTION_GET_CONTENT);
 //                startActivityForResult(Intent.createChooser(mIntent, "Select Picture"), PICK_IMAGE);
+
 //                Intent getIntent = new Intent(Intent.ACTION_GET_CONTENT);
 //                getIntent.setType("image/*");
 //
@@ -152,10 +155,95 @@ public class PersonalProfilePage extends AppCompatActivity {
 //                Intent chooserIntent = Intent.createChooser(getIntent, "Select Image");
 //                chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[] {pickIntent});
 //                startActivityForResult(chooserIntent, PICK_IMAGE);
-                Intent gallery_Intent = new Intent(getApplicationContext(), PickFromGallery.class);
+                final Intent gallery_Intent = new Intent(getApplicationContext(), PickFromGallery.class);
                 startActivityForResult(gallery_Intent, GALLERY_ACTIVITY_CODE);
                 break;
             case 2:
+                item = LayoutInflater.from(PersonalProfilePage.this).inflate(R.layout.dialog_password_reset,null);
+
+                final AlertDialog dialogPw = new AlertDialog.Builder(PersonalProfilePage.this)
+                        .setTitle("Update Your Password")
+                        .setView(item)
+                        .setPositiveButton("Ok",null)
+                        .setNegativeButton("Cancel",null)
+                        .create();
+                dialogPw.setOnShowListener(new DialogInterface.OnShowListener() {
+                    @Override
+                    public void onShow(DialogInterface dialogInterface) {
+                        Button button = ((AlertDialog) dialogPw).getButton(AlertDialog.BUTTON_POSITIVE);
+                        button.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Log.d("Enter Password","Check");
+                                EditText newPassword = (EditText) item.findViewById(R.id.new_password);
+                                EditText verifyPassword = (EditText) item.findViewById(R.id.verify_new_password);
+                                EditText currentPassword = (EditText) item.findViewById(R.id.current_password);
+                                String nPass = newPassword.getText().toString();
+                                String vPass = verifyPassword.getText().toString();
+                                String cPass = currentPassword.getText().toString();
+
+                                Log.d("Enter Password",nPass);
+                                Log.d("Enter Password",vPass);
+                                Log.d("Enter Password",cPass);
+                                Log.d("Enter Password",password);
+
+
+                                if(nPass.equals("") || vPass.equals("") || cPass.equals("")){
+                                    Toast.makeText(getApplicationContext(),"No Enter!",Toast.LENGTH_SHORT).show();
+                                } else {
+                                    if(!nPass.equals(vPass)){
+                                        newPassword.requestFocus();
+                                        Toast.makeText(getApplicationContext(),"Verify Password is Wrong",Toast.LENGTH_SHORT).show();
+                                    } else if(password.equals(nPass)){
+                                        newPassword.requestFocus();
+                                        Toast.makeText(getApplicationContext(),"New Password and Current One Are the Same",Toast.LENGTH_SHORT).show();
+                                    } else if(!cPass.equals(password)){
+                                        currentPassword.requestFocus();
+                                        Toast.makeText(getApplicationContext(),"Wrong Password",Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        password = nPass;
+                                        Toast.makeText(getApplicationContext(),"Update Successfully",Toast.LENGTH_SHORT).show();
+                                        dialogPw.dismiss();
+                                    }
+                                }
+                            }
+                        });
+                    }
+                });
+                dialogPw.show();
+//                builder.setTitle("Update Your Password")
+//                        .setView(item)
+//                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialogInterface, int i) {
+//                                EditText newPassword = (EditText) item.findViewById(R.id.new_password);
+//                                EditText verifyPassword = (EditText) item.findViewById(R.id.verify_new_password);
+//                                EditText currentPassword = (EditText) item.findViewById(R.id.current_password);
+//                                String nPass = newPassword.getText().toString();
+//                                String vPass = verifyPassword.getText().toString();
+//                                String cPass = currentPassword.getText().toString();
+//
+//                                if(nPass == "" || vPass == "" || cPass == ""){
+//                                    Toast.makeText(getApplicationContext(),"No Enter!",Toast.LENGTH_SHORT).show();
+//                                } else {
+//                                    if(cPass != password){
+//                                        Toast.makeText(getApplicationContext(),"Wrong Password",Toast.LENGTH_SHORT).show();
+//                                    } else if(password == nPass){
+//                                        Toast.makeText(getApplicationContext(),"New Password and Current One Are the Same",Toast.LENGTH_SHORT).show();
+//                                    } else if(nPass != vPass){
+//                                        Toast.makeText(getApplicationContext(),"Verify Password is Wrong",Toast.LENGTH_SHORT).show();
+//                                    } else {
+//                                        password = nPass;
+//                                    }
+//                                }
+//                            }
+//                        })
+//                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialogInterface, int i) {
+//                                dialogInterface.dismiss();
+//                            }
+//                        }).show();
                 break;
             case 3:
                 break;
