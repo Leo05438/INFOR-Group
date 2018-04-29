@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.Window;
@@ -113,6 +114,7 @@ public class PersonalProfilePage extends AppCompatActivity {
 
         switch(pos){
             case 0:
+                //Username
                 ///
                 item = LayoutInflater.from(PersonalProfilePage.this).inflate(R.layout.dialog_username,null);
                 TextView usernameText = (TextView) item.findViewById(R.id.dialog_text);
@@ -141,6 +143,7 @@ public class PersonalProfilePage extends AppCompatActivity {
 
                 break;
             case 1:
+                //Photo
 //                Intent mIntent = new Intent();
 //                mIntent.setType("image/*");
 //                mIntent.setAction(Intent.ACTION_GET_CONTENT);
@@ -159,6 +162,7 @@ public class PersonalProfilePage extends AppCompatActivity {
                 startActivityForResult(gallery_Intent, GALLERY_ACTIVITY_CODE);
                 break;
             case 2:
+                //Password
                 item = LayoutInflater.from(PersonalProfilePage.this).inflate(R.layout.dialog_password_reset,null);
 
                 final AlertDialog dialogPw = new AlertDialog.Builder(PersonalProfilePage.this)
@@ -246,14 +250,19 @@ public class PersonalProfilePage extends AppCompatActivity {
 //                        }).show();
                 break;
             case 3:
+                //Email
+
                 break;
             case 4:
-                //intent.setClass(PersonalProfilePage.this,);
+                intent.setClass(PersonalProfilePage.this,SettingPage.class);
+                startActivity(intent);
                 break;
             case 5:
+                builder.setTitle("About")
+                        .setMessage("It's an App developed by an INFOR member.")
+                        .show();
                 break;
         }
-        //startActivity(intent);
     }
     @Override
     protected void onActivityResult(int requestCode,int resultCode,Intent data){

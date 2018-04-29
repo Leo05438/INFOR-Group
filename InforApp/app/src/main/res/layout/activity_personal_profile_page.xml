@@ -13,7 +13,6 @@
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
         android:fitsSystemWindows="true"
-
         />
     <ScrollView
         android:id="@+id/scroll_image"

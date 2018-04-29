@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -44,6 +45,9 @@ public class LoginPage extends AppCompatActivity implements LoaderCallbacks<Curs
      * Id to identity READ_CONTACTS permission request.
      */
     private static final int REQUEST_READ_CONTACTS = 0;
+
+    private static final String TAG = "Preference";
+    public static final String prefAccount = "Account";
 
     /**
      * A dummy authentication store containing known user names and passwords.
@@ -356,6 +360,22 @@ public class LoginPage extends AppCompatActivity implements LoaderCallbacks<Curs
             mAuthTask = null;
             showProgress(false);
         }
+    }
+
+    private void resPref(){
+        SharedPreferences setting = getSharedPreferences(prefAccount,0);
+        String account = setting.getString(prefAccount,"");
+        if(!account.equals("")){
+            mEmailView.setText(account);
+            mPasswordView.requestFocus();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        SharedPreferences setting = getSharedPreferences(prefAccount,0);
+        setting.edit().putString(prefAccount,mEmailView.getText().toString()).apply();
     }
 }
 

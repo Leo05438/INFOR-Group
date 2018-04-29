@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_checked="true"
+        android:drawable="@drawable/toggle_on" >
+        <bitmap xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/privacy_switch_on_bm"
+            android:src="@drawable/toggle_on"
+            android:tileMode="disabled"
+            android:gravity="top">
+        </bitmap>
+    </item> <!-- pressed -->
+    <item android:state_checked="false"
+        android:drawable="@drawable/toggle_off">
+        <bitmap xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/privacy_switch_off_bm"
+            android:src="@drawable/toggle_off"
+            android:tileMode="disabled"
+            android:gravity="top">
+        </bitmap>
+    </item> <!-- default/unchecked -->
+
+
+</selector>

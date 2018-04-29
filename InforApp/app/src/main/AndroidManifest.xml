@@ -35,6 +35,16 @@
             android:name=".PickFromGallery"
             android:label=""
             />
+        <activity
+            android:name=".SettingPage"
+            android:label=""
+            android:theme="@style/AppTheme.NoActionBar"
+            />
+        <activity
+            android:name=".AskQuestion"
+            android:label=""
+            android:theme="@style/AppTheme.NoActionBar"
+            />
     </application>
 
 </manifest>
