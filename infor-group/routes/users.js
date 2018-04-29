@@ -43,4 +43,16 @@ router.get('/signout', function(req, res, next) {
   res.end();
 });
 
+router.get('/userinfo',function(req, res, next){
+  if (!req.session.logined) {
+    res.redirect('/');
+    return;
+  }
+  res.locals.username = req.session.name ;
+  res.locals.passwd = req.session.passwd;
+  Users.findOne({username:req.session.name},function(e,doc){
+    res.render('users/userinfo');
+  })
+})
+
 module.exports = router;

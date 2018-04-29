@@ -59,8 +59,6 @@ router.post('/login', function(req, res, next) {
       return
     }
 
-    req.session.name = req.body.user
-
     Users.find().lean().exec(function(e,docs){
       var users = docs
       var index = 0
@@ -77,6 +75,8 @@ router.post('/login', function(req, res, next) {
             return
           }
           req.session.logined = true
+          req.session.name = req.body.user
+          req.session.passwd = req.body.passwd
           console.log('登入成功')
           res.redirect('/')
           return
