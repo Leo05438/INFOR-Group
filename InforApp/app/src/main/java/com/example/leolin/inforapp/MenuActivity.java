@@ -108,15 +108,12 @@ public class MenuActivity extends AppCompatActivity
                         fab.setImageDrawable(getResources().getDrawable(R.drawable.ic_add_black_24dp));
                     }
                 break;
-            case R.id.nav_gallery:
+            case R.id.nav_friend:
+
+                fab.hide();
                 Fragment fFriend = new FragmentFriend();
                 getFragmentManager().beginTransaction().replace(R.id.content_menu,fFriend).commit();
 
-                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    fab.setImageDrawable(getResources().getDrawable(R.drawable.ic_group_add_black_24dp, MenuActivity.this.getTheme()));
-                } else {
-                    fab.setImageDrawable(getResources().getDrawable(R.drawable.ic_group_add_black_24dp));
-                }
                 break;
             case R.id.nav_slideshow:
                 break;
