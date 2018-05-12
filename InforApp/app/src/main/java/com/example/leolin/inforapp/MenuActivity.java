@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -17,6 +18,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class MenuActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -99,6 +107,7 @@ public class MenuActivity extends AppCompatActivity
 
         switch(id){
             case R.id.nav_question:
+                    fab.show();
                     Fragment fQuestion = new FragmentActivityQuestion();
                     getFragmentManager().beginTransaction().replace(R.id.content_menu,fQuestion).commit();
 
@@ -107,6 +116,7 @@ public class MenuActivity extends AppCompatActivity
                     } else {
                         fab.setImageDrawable(getResources().getDrawable(R.drawable.ic_add_black_24dp));
                     }
+
                 break;
             case R.id.nav_friend:
 
@@ -115,13 +125,14 @@ public class MenuActivity extends AppCompatActivity
                 getFragmentManager().beginTransaction().replace(R.id.content_menu,fFriend).commit();
 
                 break;
-            case R.id.nav_slideshow:
+            case R.id.nav_announce:
                 break;
             case R.id.nav_manage:
                 break;
             case R.id.nav_share:
                 break;
-            case R.id.nav_send:
+            case R.id.nav_logout:
+                //TODO:Logout the user
                 break;
         }
 

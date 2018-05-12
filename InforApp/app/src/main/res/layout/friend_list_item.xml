@@ -1,42 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/fcontainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal">
 
     <ImageView
-        android:id="@+id/friend"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/friend_icon"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:adjustViewBounds="true"
         />
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/friend_name"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent">
-
-        <TextView
-            android:id="@+id/friend_name"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/friend_add"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:text="Accept"
+            android:layout_toLeftOf="@+id/friend_ignore"
+            android:layout_toStartOf="@+id/friend_ignore"
             />
 
-        <TextView
-            android:id="@+id/mutual_friend"
-            android:layout_width="match_parent"
+        <Button
+            android:id="@+id/friend_ignore"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="Delete"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             />
-
-    </LinearLayout>
-
-    <Button
-        android:id="@+id/friend_add"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <Button
-        android:id="@+id/friend_ignore"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    </RelativeLayout>
 
 </LinearLayout>
