@@ -39,6 +39,10 @@ public class FragmentActivityQuestion extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_question,container,false);
 
+        Question newQ = (Question) getArguments().getSerializable("newQuestion");
+
+        if(newQ == null)
+
         searchBox = (EditText) view.findViewById(R.id.search_question_box);
         listView = (ListView) view.findViewById(R.id.question_list);
 
@@ -57,6 +61,7 @@ public class FragmentActivityQuestion extends Fragment {
         mList.add(new Question(R.drawable.flamingo,"Why I'm so handsome","Appearance"));
         mList.add(new Question(R.drawable.chika,"Why I'm so oil","Personality"));
         mList.add(new Question(R.drawable.kato,"Why I'm so idiot","Intellect"));
+        if(newQ != null) mList.add(newQ);
 
         mAdapter = new Madapter(getActivity(),mList);
         listView.setAdapter(mAdapter);

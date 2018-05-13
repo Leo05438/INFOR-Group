@@ -1,9 +1,13 @@
 package com.example.leolin.inforapp;
 
-public class Question {
+import java.io.Serializable;
+
+public class Question implements Serializable{
     public int asker;
     public String qtitle;
     public String qtag;
+    private static final long serialVersionUID = 1L;
+
 
     public Question(int asker,String qtitle,String qtag){
         super();

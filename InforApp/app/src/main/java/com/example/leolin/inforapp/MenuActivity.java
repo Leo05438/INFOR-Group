@@ -30,6 +30,7 @@ public class MenuActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private FloatingActionButton fab;
+    private static final int requestQuestionCode = 7122;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +47,7 @@ public class MenuActivity extends AppCompatActivity
 //                        .setAction("Action", null).show();
                 Intent intent = new Intent();
                 intent.setClass(MenuActivity.this,AskQuestion.class);
-                startActivity(intent);
+                startActivityForResult(intent,requestQuestionCode);
             }
         });
 
@@ -60,10 +61,16 @@ public class MenuActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         Fragment f = new FragmentActivityQuestion();
+        Question newQ = null;
+        Bundle b = new Bundle();
+        b.putSerializable("newQuestion",newQ);
+        f.setArguments(b);
         getFragmentManager().beginTransaction().replace(R.id.content_menu,f).commit();
 
         setProfileImageClickable();
         setQuestionList();
+
+        Log.d("MenuActivity onCreate","Again");
     }
 
     @Override
@@ -109,6 +116,10 @@ public class MenuActivity extends AppCompatActivity
             case R.id.nav_question:
                     fab.show();
                     Fragment fQuestion = new FragmentActivityQuestion();
+                    Question newQ = null;
+                    Bundle b = new Bundle();
+                    b.putSerializable("newQuestion",newQ);
+                    fQuestion.setArguments(b);
                     getFragmentManager().beginTransaction().replace(R.id.content_menu,fQuestion).commit();
 
                     if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -126,6 +137,11 @@ public class MenuActivity extends AppCompatActivity
 
                 break;
             case R.id.nav_announce:
+
+                fab.hide();
+                Fragment fAnnounce = new FragmentAnnouncement();
+                getFragmentManager().beginTransaction().replace(R.id.content_menu,fAnnounce).commit();
+
                 break;
             case R.id.nav_manage:
                 break;
@@ -162,5 +178,17 @@ public class MenuActivity extends AppCompatActivity
     //TODO:Set Question List Through Server
     public void setQuestionList(){
 
+    }
+    @Override
+    protected void onActivityResult(int requestCode,int resultCode,Intent data){
+        if(resultCode == requestCode){
+            Question newQ = (Question) getIntent().getSerializableExtra("newQuestion");
+            Bundle b = new Bundle();
+            b.putSerializable("newQuestion",newQ);
+            Fragment fQuestion = new FragmentActivityQuestion();
+            fQuestion.setArguments(b);
+            getFragmentManager().beginTransaction().replace(R.id.content_menu,fQuestion).commit();
+            Log.d("onActivityResult","Again");
+        }
     }
 }
