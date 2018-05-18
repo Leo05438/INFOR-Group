@@ -120,8 +120,10 @@ router.post('/changePasswd',function(req, res, next){
   })
 });
 
-router.post('editQuestion',function(req,res,next){
-  
+router.post('/editQuestion',function(req,res,next){
+  Questions.update({id:req.query.id},{question:req.body.question,article:req.body.article},function(){
+    res.redirect('/');
+  })
 })
 
 module.exports = router;

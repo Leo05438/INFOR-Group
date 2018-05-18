@@ -81,6 +81,7 @@ router.get('/editQuestion',function(req, res, next){
   Questions.findOne({id:req.query.id},function(e,doc){
     res.locals.question = doc.question;
     res.locals.article = doc.article;
+    res.locals.id = doc.id;
     res.render('users/editQuestion');
   })
 });
