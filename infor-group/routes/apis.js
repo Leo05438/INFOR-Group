@@ -126,4 +126,47 @@ router.post('/editQuestion',function(req,res,next){
   })
 })
 
+router.post('/androidLogin',function(req,res,next){
+
+  Users.find().lean().exec(function(e,docs){
+    var users = docs;
+    var index = 0;
+    var total = users.length;
+
+    for ( index ; index < total ; index++ ) {
+      var user = users[index];
+      if ( req.body.user == user.username ) {
+        if ( req.body.passwd != user.passwd ) {
+          console.log('密碼錯誤');
+          res.locals.logined = false;
+          res.locals.lErro = 1;
+          res.locals.lErroType = 3;
+          res.locals.name = false;
+          res.locals.passwd = false;
+          res.render('android/login');
+          return;
+        }
+        res.locals.logined = true;
+        res.locals.lErro = 0;
+        res.locals.lErroType = 0;
+        res.locals.name = req.body.user;
+        res.locals.passwd = req.body.passwd;
+        console.log('登入成功');
+        res.render('android/login');
+        return
+      }
+      if (index == total-1) {
+        console.log('名稱不存在');
+        res.locals.logined = false;
+        res.locals.lErro = 1;
+        res.locals.lErroType = 4;
+        res.locals.name = false;
+        res.locals.passwd = false;
+        res.render('android/login');
+        return;
+      }
+    }
+  });
+});
+
 module.exports = router;
