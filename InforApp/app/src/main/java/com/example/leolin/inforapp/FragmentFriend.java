@@ -94,7 +94,7 @@ public class FragmentFriend extends Fragment {
 
             if(convertView == null){
                 holder = new ViewHolder();
-                convertView = inflater.inflate(R.layout.friend_list_item,null);
+                convertView = inflater.inflate(R.layout.friend_list_item,parent,false);
                 holder.fcontainer = (LinearLayout) convertView.findViewById(R.id.fcontainer);
                 holder.icon = (ImageView) convertView.findViewById(R.id.friend_icon);
                 holder.name = (TextView) convertView.findViewById(R.id.friend_name);
@@ -103,12 +103,12 @@ public class FragmentFriend extends Fragment {
                 holder = (ViewHolder) convertView.getTag();
             }
 
-            holder.icon.setBackgroundResource(mDisplayValue.get(pos).icon);
-            holder.name.setText(mDisplayValue.get(pos).name);
+            holder.icon.setBackgroundResource(mDisplayValue.get(pos).getIcon());
+            holder.name.setText(mDisplayValue.get(pos).getName());
             holder.fcontainer.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Toast.makeText(getActivity(),mDisplayValue.get(pos).name,Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(),mDisplayValue.get(pos).getName(),Toast.LENGTH_SHORT).show();
                 }
             });
             return convertView;
@@ -140,10 +140,10 @@ public class FragmentFriend extends Fragment {
                         constraint =  constraint.toString().toLowerCase();
 
                         for(int i = 0;i < mOriginValue.size();++i){
-                            String data = mOriginValue.get(i).name;
+                            String data = mOriginValue.get(i).getName();
                             if(data.toLowerCase().contains(constraint.toString())){
-                                FilterArrList.add(new Friend(mOriginValue.get(i).icon,
-                                        mOriginValue.get(i).name));
+                                FilterArrList.add(new Friend(mOriginValue.get(i).getIcon(),
+                                        mOriginValue.get(i).getName()));
                             }
                             results.count = FilterArrList.size();
                             results.values = FilterArrList;

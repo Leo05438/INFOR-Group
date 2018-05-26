@@ -5,53 +5,56 @@ import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Build;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
-import android.view.ViewTreeObserver;
-import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class PersonalProfilePage extends AppCompatActivity {
 
-    private String[] setting_content = {"Username","Photo","Password","Email","Setting","About"};
+    private String[] setting_content = {"Brief","Photo","Password","Setting","About"};
     private int[] icons = {R.drawable.ic_account_box_black_24dp,R.drawable.ic_insert_photo_black_24dp,
-             R.drawable.ic_lock_black_24dp,R.drawable.ic_email_black_24dp
-            ,R.drawable.ic_settings_black_24dp,R.drawable.ic_help_black_24dp};
+             R.drawable.ic_lock_black_24dp, R.drawable.ic_settings_black_24dp,R.drawable.ic_help_black_24dp};
     private ListView listView_setting;
     private SimpleAdapter mAdapter;
     private View item;
-    private String username = "Your Current Username: ";
+    private String userbrief = "Your Current Brief: ";
     private String password = "jizz7122";
-    private int layoutHeight;
-    private int layoutWidth;
     private final int GALLERY_ACTIVITY_CODE=200;
     private final int RESULT_CROP = 400;
     private ImageView image;
+    private OkHttpClient client;
+    private Username USERNAME;
+    private View mPasswordChange;
+    private View mProgress;
 
     public static final int PICK_IMAGE = 1;
 
@@ -77,13 +80,20 @@ public class PersonalProfilePage extends AppCompatActivity {
 
         image = (ImageView) findViewById(R.id.setting_photo_sticker);
 
+        client = new OkHttpClient.Builder()
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .readTimeout(20,TimeUnit.SECONDS)
+                .build();
+        USERNAME = (Username) getApplication();
+        password = USERNAME.getPASSWORD();
+
         setAdaper();
         listViewItemClick();
     }
     public void setAdaper(){
         List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
 
-        for(int i = 0;i < 6;++i){
+        for(int i = 0;i < 5;++i){
             Map<String,Object> map = new HashMap<String,Object>();
             map.put("icons",icons[i]);
             map.put("content",setting_content[i]);
@@ -116,21 +126,50 @@ public class PersonalProfilePage extends AppCompatActivity {
             case 0:
                 //Username
                 ///
-                item = LayoutInflater.from(PersonalProfilePage.this).inflate(R.layout.dialog_username,null);
-                TextView usernameText = (TextView) item.findViewById(R.id.dialog_text);
-                Log.d("JIZZZZZZZZZZ",usernameText.getText().toString());
-                usernameText.setText(username);
+                item = LayoutInflater.from(PersonalProfilePage.this).inflate(R.layout.dialog_brief,null);
+                TextView briefText = (TextView) item.findViewById(R.id.dialog_text);
+                Log.d("JIZZZZZZZZZZ",briefText.getText().toString());
+                briefText.setText(userbrief);
                 ///
-                builder.setTitle("Set Username")
+                builder.setTitle("Set Brief")
                         .setView(item)
                         .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 EditText editText = (EditText) item.findViewById(R.id.dialog_change_name);
-                                if(editText.getText().toString() != "") username = "Your Current Username: " + editText.getText().toString();
+                                if(editText.getText().toString() != "") userbrief = "Your Current Brief: " + editText.getText().toString();
                                 //usernameText.setText(nUsername);
+                                RequestBody formBody = new FormBody.Builder()
+//                                        .add("User")
+//                                        .add("Brief")
+                                        .build();
+                                Request request = new Request.Builder()
+                                        .url("http://")
+                                        .post(formBody)
+                                        .build();
+                                client.newCall(request).enqueue(new Callback() {
+                                    @Override
+                                    public void onFailure(Call call, IOException e) {
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
 
-                                Toast.makeText(getApplicationContext(),username,Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                                    }
+
+                                    @Override
+                                    public void onResponse(Call call, Response response) throws IOException {
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+
+                                            }
+                                        });
+                                    }
+                                });
+
+                                Toast.makeText(getApplicationContext(),userbrief,Toast.LENGTH_SHORT).show();
                             }
                         })
                         .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -182,7 +221,7 @@ public class PersonalProfilePage extends AppCompatActivity {
                                 EditText newPassword = (EditText) item.findViewById(R.id.new_password);
                                 EditText verifyPassword = (EditText) item.findViewById(R.id.verify_new_password);
                                 EditText currentPassword = (EditText) item.findViewById(R.id.current_password);
-                                String nPass = newPassword.getText().toString();
+                                final String nPass = newPassword.getText().toString();
                                 String vPass = verifyPassword.getText().toString();
                                 String cPass = currentPassword.getText().toString();
 
@@ -191,12 +230,11 @@ public class PersonalProfilePage extends AppCompatActivity {
                                 Log.d("Enter Password",cPass);
                                 Log.d("Enter Password",password);
 
-
                                 if(nPass.equals("") || vPass.equals("") || cPass.equals("")){
                                     Toast.makeText(getApplicationContext(),"No Enter!",Toast.LENGTH_SHORT).show();
                                 } else {
                                     if(!nPass.equals(vPass)){
-                                        newPassword.requestFocus();
+                                        verifyPassword.requestFocus();
                                         Toast.makeText(getApplicationContext(),"Verify Password is Wrong",Toast.LENGTH_SHORT).show();
                                     } else if(password.equals(nPass)){
                                         newPassword.requestFocus();
@@ -205,8 +243,42 @@ public class PersonalProfilePage extends AppCompatActivity {
                                         currentPassword.requestFocus();
                                         Toast.makeText(getApplicationContext(),"Wrong Password",Toast.LENGTH_SHORT).show();
                                     } else {
-                                        password = nPass;
-                                        Toast.makeText(getApplicationContext(),"Update Successfully",Toast.LENGTH_SHORT).show();
+                                        RequestBody formBody = new FormBody.Builder()
+                                                .add("user",USERNAME.getUSERNAME())
+                                                .add("oPasswd",USERNAME.getPASSWORD())
+                                                .add("nPasswd",nPass)
+                                                .build();
+                                        final Request request = new Request.Builder()
+                                                .url("http://group.infor.org/android/changePasswd")
+                                                .post(formBody)
+                                                .build();
+                                        client.newCall(request).enqueue(new Callback() {
+                                            @Override
+                                            public void onFailure(Call call, IOException e) {
+                                                runOnUiThread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        Toast.makeText(PersonalProfilePage.this,"Changed Failed.",Toast.LENGTH_SHORT).show();
+                                                    }
+                                                });
+                                            }
+
+                                            @Override
+                                            public void onResponse(Call call, Response response) throws IOException {
+                                                final String result = response.body().string();
+                                                runOnUiThread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        resetPassword(result,nPass);
+                                                        //{"changed" : true/false
+                                                        // "errorType": 0 -> password error
+                                                        //  1 -> no this user
+                                                        // }
+                                                    }
+                                                });
+                                            }
+                                        });
+                                        //Toast.makeText(getApplicationContext(),"Update Successfully",Toast.LENGTH_SHORT).show();
                                         dialogPw.dismiss();
                                     }
                                 }
@@ -250,14 +322,10 @@ public class PersonalProfilePage extends AppCompatActivity {
 //                        }).show();
                 break;
             case 3:
-                //Email
-
-                break;
-            case 4:
                 intent.setClass(PersonalProfilePage.this,SettingPage.class);
                 startActivity(intent);
                 break;
-            case 5:
+            case 4:
                 builder.setTitle("About")
                         .setMessage("It's an App developed by an INFOR member.")
                         .show();
@@ -343,6 +411,31 @@ public class PersonalProfilePage extends AppCompatActivity {
             startActivityForResult(cropIntent,RESULT_CROP);
         } catch(ActivityNotFoundException anfe) {
             anfe.printStackTrace();
+        }
+    }
+    private void resetPassword(String response,String nPass){
+        if(!response.equals("")){
+            StringBuilder all = new StringBuilder();
+            for(int i = 1;i < response.length();++i){
+                if(response.charAt(i - 1) == ':'){
+                    for(int j = i;response.charAt(j) != ',' && response.charAt(j) != '}';++j){
+                        all.append(response.charAt(j));
+                    }
+                    all.append(" ");
+                }
+            }
+            final String[] params = all.toString().split(" ");
+            if(params[0].equals("false")){
+                if(params[1].equals("0")){
+                    Toast.makeText(PersonalProfilePage.this,"Wrong Password",Toast.LENGTH_SHORT).show();
+                } else if(params[1].equals("1")){
+                    Toast.makeText(PersonalProfilePage.this,"User doesn't exist",Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                USERNAME.setPASSWORD(nPass);
+                //Toast.makeText(PersonalProfilePage.this,"Updated Successfully",Toast.LENGTH_SHORT).show();
+                Toast.makeText(PersonalProfilePage.this,USERNAME.getUSERNAME() + " " + USERNAME.getPASSWORD(),Toast.LENGTH_SHORT).show();
+            }
         }
     }
 }

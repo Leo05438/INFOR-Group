@@ -21,6 +21,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -30,70 +31,84 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginPage extends AppCompatActivity implements LoaderCallbacks<Cursor> {
+public class LoginPage extends AppCompatActivity{
 
     /**
      * Id to identity READ_CONTACTS permission request.
      */
-    private static final int REQUEST_READ_CONTACTS = 0;
 
     private static final String TAG = "Preference";
-    public static final String prefAccount = "Account";
+    public static final String prefAccount = "User";
+    public static final String prefPasswd = "Passwd";
+    public static final String LOGINED = "Login";
+    private String result = "";
+    private SharedPreferences settings;
+    private boolean logined = false;
+    private boolean cancel = false;
+    private OkHttpClient client;
+    private Username mUSERNAME;
+    private ExecutorService service;
+    //private UserLoginTask mAuthTask = null;
 
-    /**
-     * A dummy authentication store containing known user names and passwords.
-     * TODO: remove after connecting to a real authentication system.
-     */
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "foo@example.com:hello", "bar@example.com:world"
-    };
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
-    private UserLoginTask mAuthTask = null;
 
     // UI references.
-    private AutoCompleteTextView mEmailView;
-    private EditText mPasswordView;
+    private EditText mUser;
+    private EditText mPassword;
     private View mProgressView;
     private View mLoginFormView;
+    //private TextView result;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_page);
+
+        client = new OkHttpClient.Builder()
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .readTimeout(20,TimeUnit.SECONDS)
+                .build();
+        service = Executors.newSingleThreadExecutor();
+
         // Set up the login form.
-        mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
-        populateAutoComplete();
+        mUser = (EditText) findViewById(R.id.user);
 
-        mPasswordView = (EditText) findViewById(R.id.password);
+        //result = (TextView) findViewById(R.id.result);
+        mPassword = (EditText) findViewById(R.id.password);
+
         //setoneditoractionlistener works when you press the return button after typing
-        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == EditorInfo.IME_ACTION_DONE || id == EditorInfo.IME_NULL) {
-                    //finish typing or not typing
-                    attemptLogin();
-                    return true;
-                }
-                return false;
-            }
-        });
-
-        Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
+        Button mEmailSignInButton = (Button) findViewById(R.id.sign_in_button);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                attemptLogin();
+                Log.d("JIZZPRESSS","BUTTON");
+                attemptLogin(false);
             }
         });
 
@@ -109,116 +124,132 @@ public class LoginPage extends AppCompatActivity implements LoaderCallbacks<Curs
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
-    }
+        mUSERNAME = (Username)getApplication();
 
-    private void populateAutoComplete() {
-        if (!mayRequestContacts()) {
-            return;
-        }
-        //provide a asynchronous way to get the contact data
-        getLoaderManager().initLoader(0, null, this);
+        resPref();
     }
-
-    private boolean mayRequestContacts() {
-        //if version is lower than marshmallow(6.X),access directly
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            return true;
-        }
-        //not lower than marshmallow,check get the permission yet
-        if (checkSelfPermission(READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
-            return true;
-        }
-        //first enter will return false,second enter will tell the user whether they are willing to give access
-        if (shouldShowRequestPermissionRationale(READ_CONTACTS)) {
-            //snackbar is a fixed toast? but it only works when there is a view exists
-            Snackbar.make(mEmailView, R.string.permission_rationale, Snackbar.LENGTH_INDEFINITE)
-                    .setAction(android.R.string.ok, new View.OnClickListener() {
-                        @Override
-                        @TargetApi(Build.VERSION_CODES.M)
-                        public void onClick(View v) {
-                            requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS);
-                        }
-                    });
-        } else { // first time enter
-            requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS);
-        }
-        return false;
-    }
-
-    /**
-     * Callback received when a permissions request has been completed.
-     */
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        if (requestCode == REQUEST_READ_CONTACTS) {
-            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                populateAutoComplete();
-            }
-        }
-    }
-
 
     /**
      * Attempts to sign in or register the account specified by the login form.
      * If there are form errors (invalid email, missing fields, etc.), the
      * errors are presented and no actual login attempt is made.
      */
-    private void attemptLogin() {
-        if (mAuthTask != null) {
-            return;
-        }
+    private void attemptLogin(boolean logined) {
 
-        // Reset errors.
-        mEmailView.setError(null);
-        mPasswordView.setError(null);
+        Log.d("AttemptLogin",String.valueOf(logined));
 
         // Store values at the time of the login attempt.
-        String email = mEmailView.getText().toString();
-        String password = mPasswordView.getText().toString();
+        final String user = mUser.getText().toString();
+        final String password = mPassword.getText().toString();
 
-        boolean cancel = false;
-        View focusView = null;
-
-        // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
-            mPasswordView.setError(getString(R.string.error_invalid_password));
-            focusView = mPasswordView;
-            cancel = true;
+        if(logined){
+            showProgress(true);
+            Intent intent = new Intent();
+            intent.setClass(LoginPage.this,MenuActivity.class);
+            startActivity(intent);
+            Toast.makeText(LoginPage.this,mUSERNAME.getUSERNAME() + " " + mUSERNAME.getPASSWORD(),Toast.LENGTH_SHORT).show();
+            finish();
         }
 
-        // Check for a valid email address.
-        if (TextUtils.isEmpty(email)) {
-            mEmailView.setError(getString(R.string.error_field_required));
-            focusView = mEmailView;
-            cancel = true;
-        } else if (!isEmailValid(email)) {
-            mEmailView.setError(getString(R.string.error_invalid_email));
-            focusView = mEmailView;
-            cancel = true;
-        }
+        if(!user.equals("") && !password.equals("")){
+                showProgress(true);
+                RequestBody formBody = new FormBody.Builder()
+                        .add("user",user)
+                        .add("passwd",password)
+                        .build();
 
-        if (cancel) {
-            // There was an error; don't attempt login and focus the first
-            // form field with an error.
-            focusView.requestFocus();
+                Request request = new Request.Builder()
+                        .url("http://group.infor.org/android/login")
+                        .post(formBody)
+                        .build();
+
+                client.newCall(request).enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(LoginPage.this,"Login Failed.",Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onResponse(Call call, final Response response) throws IOException {
+                        final String str = response.body().string();
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                UserLogin(str);
+                            }
+                        });
+                        //login{true(correct),false(fail)},errorType{false(no error),0(passwd error),1(name not exist)}
+                    }
+                });
         } else {
+            Log.d("WHYYYYYYYYYYYY","AHHHHHHHHHHH");
+            if(!logined){
+                if(user.equals("")){
+                    Toast.makeText(LoginPage.this,"Username Can't be blank",Toast.LENGTH_SHORT).show();
+                    mUser.requestFocus();
+                } else {
+                    Toast.makeText(LoginPage.this,"Password can't be blank",Toast.LENGTH_SHORT).show();
+                    mPassword.requestFocus();
+                }
+            }
+        }
+    }
+
+    private void UserLogin(String response){
+        if(!response.equals("")){
+            StringBuilder all = new StringBuilder();
+
+            for(int i = 1;i < response.length();++i){
+                if(response.charAt(i - 1) == ':'){
+                    for(int j = i;response.charAt(j) != ',' && response.charAt(j) != '}';++j){
+                        all.append(response.charAt(j));
+                    }
+                    all.append(" ");
+                }
+            }
+            final String[] params = all.toString().split(" ");
+            if(params[0].equals("false")){
+                cancel = true;
+                Log.d("params[0]==false","JIZZZZWHY");
+                if(params[1].equals("0")){
+                    Toast.makeText(LoginPage.this,"Wrong Password",Toast.LENGTH_SHORT).show();
+                } else if(params[1].equals("1")){
+                    Toast.makeText(LoginPage.this,"User doesn't exist",Toast.LENGTH_SHORT).show();
+                }
+            } else{
+                cancel = false;
+                Log.d("params[0]==true","JIZZZZWHY");
+            }
+        }
+        if (!cancel) {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
-            showProgress(true);
-            mAuthTask = new UserLoginTask(email, password);
-            mAuthTask.execute((Void) null);
+            Log.d("AttemptCancel",String.valueOf(cancel));
+            Log.d("AttemptLogined",String.valueOf(logined));
+
+            settings = getSharedPreferences(TAG,0);
+            settings.edit()
+                    .putString(prefAccount,mUser.getText().toString())
+                    .putString(prefPasswd,mPassword.getText().toString())
+                    .putBoolean(LOGINED,true)
+                    .apply();
+
+            mUSERNAME.setUSERNAME(mUser.getText().toString());
+            mUSERNAME.setPASSWORD(mPassword.getText().toString());
+
+            Intent intent = new Intent();
+            intent.setClass(LoginPage.this,MenuActivity.class);
+            startActivity(intent);
+            Toast.makeText(LoginPage.this,mUSERNAME.getUSERNAME(),Toast.LENGTH_SHORT).show();
+            finish();
+        } else {
+            showProgress(false);
         }
-    }
-
-    private boolean isEmailValid(String email) {
-        //TODO: Replace this with your own logic
-        return email.contains("@");
-    }
-
-    private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
-        return password.length() > 4;
     }
 
     /**
@@ -258,134 +289,20 @@ public class LoginPage extends AppCompatActivity implements LoaderCallbacks<Curs
         }
     }
 
-    @Override
-    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        return new CursorLoader(this,
-                // Retrieve data rows for the device user's 'profile' contact.
-                Uri.withAppendedPath(ContactsContract.Profile.CONTENT_URI,
-                        ContactsContract.Contacts.Data.CONTENT_DIRECTORY), ProfileQuery.PROJECTION,
-
-                // Select only email addresses.
-                ContactsContract.Contacts.Data.MIMETYPE +
-                        " = ?", new String[]{ContactsContract.CommonDataKinds.Email
-                .CONTENT_ITEM_TYPE},
-
-                // Show primary email addresses first. Note that there won't be
-                // a primary email address if the user hasn't specified one.
-                ContactsContract.Contacts.Data.IS_PRIMARY + " DESC");
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        List<String> emails = new ArrayList<>();
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
-            emails.add(cursor.getString(ProfileQuery.ADDRESS));
-            cursor.moveToNext();
-        }
-
-        addEmailsToAutoComplete(emails);
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> cursorLoader) {
-
-    }
-
-    private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
-        //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
-        ArrayAdapter<String> adapter =
-                new ArrayAdapter<>(LoginPage.this,
-                        android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
-
-        mEmailView.setAdapter(adapter);
-    }
-
-
-    private interface ProfileQuery {
-        String[] PROJECTION = {
-                ContactsContract.CommonDataKinds.Email.ADDRESS,
-                ContactsContract.CommonDataKinds.Email.IS_PRIMARY,
-        };
-
-        int ADDRESS = 0;
-        int IS_PRIMARY = 1;
-    }
-
-    /**
-     * Represents an asynchronous login/registration task used to authenticate
-     * the user.
-     */
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
-
-        private final String mEmail;
-        private final String mPassword;
-
-        UserLoginTask(String email, String password) {
-            mEmail = email;
-            mPassword = password;
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
-
-            try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return false;
-            }
-
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
-                }
-            }
-
-            // TODO: register the new account here.
-            return true;
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean success) {
-            mAuthTask = null;
-            showProgress(false);
-
-            if (success) {
-                Intent intent = new Intent();
-                intent.setClass(LoginPage.this,MenuActivity.class);
-                startActivity(intent);
-                finish();
-            } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-            mAuthTask = null;
-            showProgress(false);
-        }
-    }
 
     private void resPref(){
-        SharedPreferences setting = getSharedPreferences(prefAccount,0);
-        String account = setting.getString(prefAccount,"");
-        if(!account.equals("")){
-            mEmailView.setText(account);
-            mPasswordView.requestFocus();
+        SharedPreferences setting = getSharedPreferences(TAG,0);
+        String name = setting.getString(prefAccount,"");
+        String passwd = setting.getString(prefPasswd,"");
+        boolean login = setting.getBoolean(LOGINED,false);
+        Log.d("JIZZZZZZZZZZZZZZZZZZZZ",name + "yee");
+        Log.d("JIZZZZZZZZZZZZZZZZZZZZ",String.valueOf(login));
+        if(!name.equals("") && login){
+            Log.d("JIZZZZZZZZZZZZ","LOGIN===TRUE");
+            mUSERNAME.setUSERNAME(name);
+            mUSERNAME.setPASSWORD(passwd);
+            attemptLogin(login);
         }
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        SharedPreferences setting = getSharedPreferences(prefAccount,0);
-        setting.edit().putString(prefAccount,mEmailView.getText().toString()).apply();
-    }
 }
-

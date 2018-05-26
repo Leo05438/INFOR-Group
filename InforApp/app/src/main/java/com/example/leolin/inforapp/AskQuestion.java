@@ -28,7 +28,7 @@ public class AskQuestion extends AppCompatActivity {
     private String[] tags = {"Algorithm","Android","C#","C/C++","Html","Java","JavaScript",
             "Machine Learning","Other","Python","Unity","Web"};
     private List<Boolean> checkedList = new ArrayList<Boolean>();
-    private static final int requestCode = 7122;
+
 
     @Override
     protected void onCreate(Bundle saveInstanceState){
@@ -96,23 +96,6 @@ public class AskQuestion extends AppCompatActivity {
                     break;
                 case R.id.post_question:
                     //TODO:Upload to Server
-                    EditText askTitle = (EditText) findViewById(R.id.question_title);
-                    EditText askContent = (EditText) findViewById(R.id.question_textarea);
-
-                    if(askTitle.equals("") || askContent.equals("")){
-                        Toast.makeText(AskQuestion.this,"Please fill the question fully",Toast.LENGTH_SHORT).show();
-                    } else {
-                        String questionTitle = askTitle.getText().toString();
-                        String questionBody = askContent.getText().toString();
-                        Question newQ = new Question(R.drawable.flamingo,questionTitle,questionBody);
-                        Intent intent = new Intent();
-                        Bundle b = new Bundle();
-                        b.putSerializable("newQuestion",newQ);
-                        intent.putExtras(b);
-                        setResult(requestCode,intent);
-                        finish();
-                    }
-
                     break;
 
             }

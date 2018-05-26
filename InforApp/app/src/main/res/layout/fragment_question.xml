@@ -28,13 +28,25 @@
                 android:layout_height="wrap_content"
                 android:hint="Search Questions"/>
 
-        </LinearLayout>
+            <!--<Button
+                android:id="@+id/set_filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tags Search"
+                android:layout_weight="1"/>-->
 
-        <ListView
-            android:id="@+id/question_list"
+        </LinearLayout>
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/refresh"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/search_bar"/>
+            android:layout_below="@id/search_bar">
+            <ListView
+                android:id="@+id/question_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                />
+        </android.support.v4.widget.SwipeRefreshLayout>
 
     </RelativeLayout>
 

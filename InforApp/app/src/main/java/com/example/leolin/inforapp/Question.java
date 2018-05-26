@@ -3,17 +3,18 @@ package com.example.leolin.inforapp;
 import java.io.Serializable;
 
 public class Question implements Serializable{
-    public int asker;
-    public String qtitle;
-    public String qtag;
-    private static final long serialVersionUID = 1L;
 
+    private int asker;
+    private String username;
+    private String qtitle;
+    private String qtag;
 
-    public Question(int asker,String qtitle,String qtag){
+    public Question(int asker,String qtitle,String qtag,String username){
         super();
         this.asker = asker;
         this.qtitle = qtitle;
         this.qtag = qtag;
+        this.username = username;
     }
     public int getAsker(){
         return asker;
@@ -24,6 +25,11 @@ public class Question implements Serializable{
     public String getQtag(){
         return qtag;
     }
+
+    public String getUsername() {
+        return username;
+    }
+
     public void setAsker(int asker){
         this.asker = asker;
     }
@@ -34,4 +40,7 @@ public class Question implements Serializable{
         this.qtag = qtag;
     }
 
+    public void setUsername(String username) {
+        this.username = username;
+    }
 }

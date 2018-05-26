@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar_personal"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:fitsSystemWindows="true"
+        />
+
+    <TextView
+        android:id="@+id/question_title_display"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:textSize="30sp"/>
+
+    <ExpandableListView
+        android:id="@+id/thread"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:childDivider="#E02D2F"
+        android:groupIndicator="@null"/>
+
+</LinearLayout>

@@ -1,8 +1,8 @@
 package com.example.leolin.inforapp;
 
 public class Friend {
-    int icon;
-    String name;
+    private int icon;
+    private String name;
 
     public Friend(int icon,String name){
         super();

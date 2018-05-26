@@ -2,6 +2,7 @@ package com.example.leolin.inforapp;
 
 import android.app.Fragment;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -18,8 +19,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,7 +33,13 @@ public class MenuActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private FloatingActionButton fab;
-    private static final int requestQuestionCode = 7122;
+    private Username USERNAME;
+    private static final String TAG = "Preference";
+    public static final String prefAccount = "User";
+    public static final String LOGINED = "Login";
+    private TextView name;
+    private ImageView icon;
+    private View hView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,10 +56,10 @@ public class MenuActivity extends AppCompatActivity
 //                        .setAction("Action", null).show();
                 Intent intent = new Intent();
                 intent.setClass(MenuActivity.this,AskQuestion.class);
-                startActivityForResult(intent,requestQuestionCode);
+                startActivity(intent);
             }
         });
-
+        USERNAME = (Username) getApplication();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -59,18 +68,40 @@ public class MenuActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        hView = navigationView.getHeaderView(0);
+        name = (TextView) hView.findViewById(R.id.username_navigation);
+        name.setText(USERNAME.getUSERNAME());
+        icon = (ImageView) hView.findViewById(R.id.user_icon);
+        icon.setImageResource(R.drawable.flamingo);
+        LinearLayout backgroundImage = (LinearLayout) hView.findViewById(R.id.background_image);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            backgroundImage.setBackground(getResources().getDrawable(R.drawable.close));
+            //drawable = res.getDrawable(R.drawable.blue, getTheme());
+            //mLayout.setBackground(drawable);
+        } else {
+            backgroundImage.setBackgroundDrawable(getResources().getDrawable(R.drawable.close));
+            //drawable = res.getDrawable(R.drawable.blue);
+            //mLayout.setBackgroundDrawable(drawable);
+        }
+
+        initData();
 
         Fragment f = new FragmentActivityQuestion();
-        Question newQ = null;
-        Bundle b = new Bundle();
-        b.putSerializable("newQuestion",newQ);
-        f.setArguments(b);
         getFragmentManager().beginTransaction().replace(R.id.content_menu,f).commit();
 
         setProfileImageClickable();
-        setQuestionList();
+        //setQuestionList();
+
+        USERNAME = (Username)getApplication();
 
         Log.d("MenuActivity onCreate","Again");
+    }
+
+    public void initData(){
+//        name = (TextView) hView.findViewById(R.id.username_navigation);
+//        name.setText(USERNAME.getUSERNAME());
+//        icon = (ImageView) hView.findViewById(R.id.user_icon);
+//        icon.setBackgroundResource(R.drawable.flamingo);
     }
 
     @Override
@@ -116,10 +147,6 @@ public class MenuActivity extends AppCompatActivity
             case R.id.nav_question:
                     fab.show();
                     Fragment fQuestion = new FragmentActivityQuestion();
-                    Question newQ = null;
-                    Bundle b = new Bundle();
-                    b.putSerializable("newQuestion",newQ);
-                    fQuestion.setArguments(b);
                     getFragmentManager().beginTransaction().replace(R.id.content_menu,fQuestion).commit();
 
                     if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -148,6 +175,17 @@ public class MenuActivity extends AppCompatActivity
             case R.id.nav_share:
                 break;
             case R.id.nav_logout:
+                SharedPreferences setting = getSharedPreferences(TAG,0);
+                setting.edit()
+                        .putString(prefAccount,USERNAME.getUSERNAME())
+                        .putBoolean(LOGINED,false)
+                        .apply();
+                USERNAME.setUSERNAME("");
+                USERNAME.setPASSWORD("");
+                Intent intent = new Intent();
+                intent.setClass(MenuActivity.this,LoginPage.class);
+                startActivity(intent);
+                finish();
                 //TODO:Logout the user
                 break;
         }
@@ -161,7 +199,7 @@ public class MenuActivity extends AppCompatActivity
     public void setProfileImageClickable(){
         NavigationView nav = (NavigationView) findViewById(R.id.nav_view);
         View header = nav.getHeaderView(0);
-        ImageView img = (ImageView) header.findViewById(R.id.imageView);
+        ImageView img = (ImageView) header.findViewById(R.id.user_icon);
 
         img.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -174,21 +212,5 @@ public class MenuActivity extends AppCompatActivity
                 startActivity(intent);
             }
         });
-    }
-    //TODO:Set Question List Through Server
-    public void setQuestionList(){
-
-    }
-    @Override
-    protected void onActivityResult(int requestCode,int resultCode,Intent data){
-        if(resultCode == requestCode){
-            Question newQ = (Question) getIntent().getSerializableExtra("newQuestion");
-            Bundle b = new Bundle();
-            b.putSerializable("newQuestion",newQ);
-            Fragment fQuestion = new FragmentActivityQuestion();
-            fQuestion.setArguments(b);
-            getFragmentManager().beginTransaction().replace(R.id.content_menu,fQuestion).commit();
-            Log.d("onActivityResult","Again");
-        }
     }
 }
