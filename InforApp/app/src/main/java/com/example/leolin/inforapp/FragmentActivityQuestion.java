@@ -1,17 +1,21 @@
 package com.example.leolin.inforapp;
 
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.Filterable;
@@ -30,11 +34,15 @@ import java.util.Map;
 
 public class FragmentActivityQuestion extends Fragment {
 
+    private boolean[] itemcheck;
+
     private LinearLayout lcontainer;
     private EditText searchBox;
     private ListView listView;
+    private Button tagSearch;
     private SwipeRefreshLayout mRefresh;
 
+    private ArrayList<String> mTags = new ArrayList<String>();
     private ArrayList<Question> mList = new ArrayList<Question>();
     private Madapter mAdapter;
     private String[] body = {"JIZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ","OILLLLLLLLLLLLLLLL","JIZZ"};
@@ -44,8 +52,58 @@ public class FragmentActivityQuestion extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_question,container,false);
 
+        mTags.add("Java");
+        mTags.add("C++");
+        mTags.add("Html");
+        mTags.add("JavaScript");
+        mTags.add("Python");
+        itemcheck = new boolean[mTags.size()];
+
         searchBox = (EditText) view.findViewById(R.id.search_question_box);
         listView = (ListView) view.findViewById(R.id.question_list);
+        tagSearch = (Button) view.findViewById(R.id.set_filter);
+        tagSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                new AlertDialog.Builder(getActivity())
+                        .setTitle("Choose Tags to Search Questions")
+                        .setMultiChoiceItems(mTags.toArray(new String[mTags.size()]),itemcheck,
+                                new DialogInterface.OnMultiChoiceClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i, boolean b) {
+
+                                    }
+                                })
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int which) {
+                                StringBuilder sb = new StringBuilder();
+                                boolean empty = true;
+                                for(int i = 0;i < itemcheck.length;++i){
+                                    if(itemcheck[i]){
+                                        sb.append(mTags.get(i));
+                                        sb.append(" ");
+                                        empty = false;
+                                    }
+                                }
+                                if(!empty){
+                                    Toast.makeText(getActivity(),sb.toString(),Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(getActivity(),"Nothing",Toast.LENGTH_SHORT).show();
+                                }
+
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
+                            }
+                        })
+                        .show();
+            }
+        });
         mRefresh = (SwipeRefreshLayout) view.findViewById(R.id.refresh);
         mRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -57,13 +115,16 @@ public class FragmentActivityQuestion extends Fragment {
         searchBox.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                Log.d("BeforeTextChanged","IN");
             }
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 mAdapter.getFilter().filter(charSequence.toString());
+                Log.d("onTextChanged","IN");
             }
             @Override
             public void afterTextChanged(Editable editable) {
+                Log.d("AfterTextChanged","IN");
             }
         });
         mList.add(new Question(R.drawable.flamingo,"Why I'm so handsome","Appearance","Pooh"));

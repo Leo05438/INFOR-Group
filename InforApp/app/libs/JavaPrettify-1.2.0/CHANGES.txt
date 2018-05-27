@@ -1,0 +1,9 @@
+1.2.0
+- Refactored the structure
+
+1.1.0
+- Refactored the structure
+- Complete function input parameter checking
+
+1.0.0
+- Initial release

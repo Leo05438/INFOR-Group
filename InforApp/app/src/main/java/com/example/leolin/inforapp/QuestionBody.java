@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -21,6 +22,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
+import java.io.PrintWriter;
+import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -28,9 +32,17 @@ import java.util.Date;
 
 public class QuestionBody extends AppCompatActivity {
 
+    private static final String HOST = "10.0.2.2";
+    private static final int PORT = 8080;
+    private Socket socket = null;
+    private BufferedReader in = null;
+    private PrintWriter out = null;
+    private String content = "";
+    private StringBuilder sb = null;
     private ArrayList<MThread> gData = new ArrayList<MThread>();
     private ArrayList<ArrayList<Message>> iData = new ArrayList<ArrayList<Message>>();
     private QMessageExpandAdapter adapter;
+    private Username USERNAME;
 
     @Override
     protected void onCreate(Bundle saveInstanceState){
@@ -48,6 +60,7 @@ public class QuestionBody extends AppCompatActivity {
             }
         });
 
+        USERNAME = (Username) getApplication();
         TextView questionTitle = (TextView) findViewById(R.id.question_title_display);
         questionTitle.setText("JIZZ?");
 
@@ -80,6 +93,9 @@ public class QuestionBody extends AppCompatActivity {
         ExpandableListView exlistview = (ExpandableListView) findViewById(R.id.thread);
         exlistview.setAdapter(adapter);
     }
+
+    
+
     public class QMessageExpandAdapter extends BaseExpandableListAdapter {
 
         private ArrayList<MThread> gData;
@@ -90,7 +106,7 @@ public class QuestionBody extends AppCompatActivity {
 
         private class ViewGroupHolder{
             ImageView icon;
-            TextView qustionTitle,questionBody,postTimes,currentTime,name;
+            TextView questionBody,postTimes,currentTime,name;
             Button comment;
         }
 
