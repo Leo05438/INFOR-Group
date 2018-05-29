@@ -3,12 +3,25 @@
   <head>
     <meta charset="utf-8">
     <title></title>
+    <script src="//code.jquery.com/jquery.min.js"></script>
   </head>
   <body>
-    <form class="" action="/apis/editQuestion?id=<%= id %>" method="post">
-      <input type="text" name="question" value=<%= question %>>
-      <input type="text" name="article" value=<%= article %>>
-      <input type="submit" name="" value="編輯">
+    <form method="POST" action="/apis/editQuestion?id=<%= id %>">
+        <div>
+            <label>標題</label>
+            <input type="text" name="title" value=<%= title %>>
+        </div>
+        <div>
+            <label>最新消息內容</label>
+            <textarea name="content" id="newQContent" value=<%= content %>></textarea>
+        </div>
+            <button type="submit">發佈</button>
     </form>
   </body>
+  <script src="/assets/ckeditor/ckeditor.js"></script>
+  <script>
+      CKEDITOR.replace( 'newQContent' );
+  </script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/6.6.9/sweetalert2.min.js"></script>
+  <script src="/assets/js/newannjs"></script>
 </html>

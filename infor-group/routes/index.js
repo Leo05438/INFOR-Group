@@ -4,13 +4,14 @@ var router = express.Router();
 var mongoose = require('mongoose');
 var Users = mongoose.model('User');
 var Questions = mongoose.model('Question');
+var Categories = mongoose.model('Category');
 
-/* GET home page. */
+//home page
 router.get('/', function(req, res, next) {
 
     res.locals.username = req.session.name ;
     res.locals.authenticated = req.session.logined;
-    Questions.find().lean().exec(function(e,docs){
+    Categories.find().lean().exec(function(e,docs){
       console.log(docs);
       res.locals.arr = docs;
       res.locals.length = docs.length;

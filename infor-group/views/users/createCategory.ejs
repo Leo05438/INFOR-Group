@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    <% for(i ; i < length ; i++){ %>
+      <p><%=arr[i].index%></p>
+    <% } %>
+    <% if(ccErro == 1){
+      if(ccErroType == 1){ %><p>資料不完整，請重新輸入</p><% }
+      if(ccErroType == 2){ %><p>分類已被使用，改一個吧</p><% }
+    } %>
+    <form class="" action="/apis/createCategory" method="post">
+      <input type="text" name="index" value="">
+      <input type="submit" name="" value="建立">
+    </form>
+  </body>
+</html>

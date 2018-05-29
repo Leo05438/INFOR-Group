@@ -6,8 +6,19 @@
   </head>
   <body>
     <p>用戶名稱：<%= username %></p>
-    <p>用戶密碼：<%= passwd %></p>
+    <%if(passwd){%><p>用戶密碼：<%= passwd %></p><%}%>
+    <p>簡介：<%= brief %></p>
+    <%if(sessUsername == username){%><a href="/users/editBrief">編輯簡介</a><%}%>
     <a href="/">主頁</a>
-    <a href="/users/changePasswd">更改密碼</a>
+    <%if(sessUsername == username){%><a href="/users/changePasswd">更改密碼</a><%}%>
+    <% for(var i = 0 ; i < length ; i++){ %>
+      <div><a href="/users/userinfo?name=<%=arr[i].name%>"><%=arr[i].name%></a></div>
+      <p><%=arr[i].title%></p>
+      <%-arr[i].content%>
+      <%if(sessUsername == arr[i].name){%>
+        <a href="/users/editQuestion?id=<%= arr[i].id %>">編輯</a>
+        <a href="#">刪除</a>
+      <%}%>
+    <% } %>
   </body>
 </html>

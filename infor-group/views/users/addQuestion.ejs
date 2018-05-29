@@ -2,14 +2,27 @@
 <html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
+    <script src="//code.jquery.com/jquery.min.js"></script>
     <title></title>
   </head>
   <body>
     <a href="/">主頁</a>
-    <form class="" action="/apis/addQuestion" method="post">
-      <input type="text" name="question" value="">
-      <input type="text" name="article" value="">
-      <input type="submit" name="submit" value="提問">
+
+    <form method="POST" action="/apis/addQuestion?category=<%= category %>">
+        <div>
+            <label>標題</label>
+            <input type="text" name="title" placeholder="[公告] 標題">
+        </div>
+        <div>
+            <label>最新消息內容</label>
+            <textarea name="content" id="newQContent" placeholder="Something Here"></textarea>
+        </div>
+            <button type="submit">發佈</button>
     </form>
+
+    <script src="/assets/ckeditor/ckeditor.js"></script>
+    <script>
+        CKEDITOR.replace( 'newQContent' );
+    </script>
   </body>
 </html>

@@ -4,8 +4,10 @@ var router = express.Router();
 var mongoose = require('mongoose');
 var Users = mongoose.model('User');
 var Questions = mongoose.model('Question');
+var Categories = mongoose.model('Category');
 
-/* 使用者註冊頁面. */
+
+//註冊
 router.get('/register', function(req, res, next) {
   if (req.session.logined) {
     res.redirect('/');
@@ -21,7 +23,8 @@ router.get('/register', function(req, res, next) {
   res.render('users/register');
 });
 
-/* 使用者登入頁面. */
+
+//登入
 router.get('/signin', function(req, res, next) {
   if (req.session.logined) {
     res.redirect('/');
@@ -37,33 +40,69 @@ router.get('/signin', function(req, res, next) {
   res.render('users/signin');
 });
 
-/* 使用者登出頁面. */
+
+//登出
 router.get('/signout', function(req, res, next) {
   req.session.logined = false;
   res.redirect('/');
   res.end();
 });
 
+
+//用戶資訊
 router.get('/userinfo',function(req, res, next){
   if (!req.session.logined) {
     res.redirect('/');
     return;
   }
-  res.locals.username = req.session.name ;
-  res.locals.passwd = req.session.passwd;
-  //Users.findOne({username:req.session.name},function(e,doc){
-    res.render('users/userinfo');
-  //})
+  if (!req.query.name) {
+    res.locals.username = req.session.name;
+    res.locals.sessUsername = req.session.name;
+    res.locals.passwd = req.session.passwd;
+    Questions.find({name:req.session.name}).lean().exec(function(e,docs){
+      res.locals.arr = docs;
+      if (docs.length) {
+        res.locals.length = docs.length;
+      }
+      else {
+        res.locals.length = null;
+      }
+      res.locals.category = req.query.index;
+    });
+    Users.findOne({username:req.session.name},function(e,doc){
+      res.locals.brief = doc.brief;
+      res.render('users/userinfo');
+    });
+  }
+  else {
+    res.locals.username = req.query.name;
+    res.locals.sessUsername = req.session.name;
+    res.locals.passwd = null;
+    Questions.find({name:req.query.name}).lean().exec(function(e,docs){
+      res.locals.arr = docs;
+      res.locals.length = docs.length;
+      res.locals.category = req.query.index;
+    });
+    Users.findOne({username:req.query.name},function(e,doc){
+      res.locals.brief = doc.brief;
+      res.render('users/userinfo');
+    });
+  }
 });
 
+
+//提問
 router.get('/addQuestion',function(req, res, next){
   if (!req.session.logined) {
     res.redirect('/');
     return;
   }
+  res.locals.category = req.query.category;
   res.render('users/addQuestion');
 });
 
+
+//更改密碼
 router.get('/changePasswd',function(req, res, next){
   if (!req.session.logined) {
     res.redirect('/');
@@ -73,26 +112,86 @@ router.get('/changePasswd',function(req, res, next){
   res.render('users/changePasswd');
 });
 
+
+//編輯提問
 router.get('/editQuestion',function(req, res, next){
   if (!req.session.logined) {
     res.redirect('/');
     return;
   }
   Questions.findOne({id:req.query.id},function(e,doc){
-    res.locals.question = doc.question;
-    res.locals.article = doc.article;
+    res.locals.title = doc.title;
+    res.locals.content = doc.content;
     res.locals.id = doc.id;
     res.render('users/editQuestion');
   })
 });
 
-router.get('/androidQuestions',function(req, res, next){
-  Questions.find().lean().exec(function(e,docs){
+
+//編輯簡介
+router.get('/editBrief',function(req, res, next){
+  if (!req.session.logined) {
+    res.redirect('/');
+    return;
+  }
+  Users.findOne({username:req.session.name},function(e,doc){
+    res.locals.brief = doc.brief;
+    res.render('users/editBrief');
+  })
+});
+
+
+//建立分類
+router.get('/createCategory',function(req, res, next){
+  if (!req.session.logined) {
+    res.redirect('/');
+    return;
+  }
+  Categories.find().lean().exec(function(e,docs){
     res.locals.arr = docs;
     res.locals.length = docs.length;
     res.locals.i = 0;
-    res.render('users/androidQuestions');
+    res.locals.ccErro = 0;
+    res.locals.ccErroType = 0;
+    if (req.session.ccErro == 1) {
+      res.locals.ccErro = req.session.ccErro;
+      res.locals.ccErroType = req.session.ccErroType;
+    }
+    req.session.ccErro = 0;
+    res.render( 'users/createCategory');
   });
-})
+});
+
+
+//分類
+router.get('/category',function(req, res, next){
+  if (!req.session.logined) {
+    res.redirect('/');
+    return;
+  }
+  if (req.query.index == "all") {
+    Questions.find().lean().exec(function(e,docs){
+      console.log(docs);
+      res.locals.arr = docs;
+      res.locals.length = docs.length;
+      res.locals.i = 0;
+      res.locals.category = req.query.index;
+      res.locals.name = req.session.name;
+      res.render( 'users/category');
+    });
+  }
+  else {
+    Questions.find({category:req.query.index}).lean().exec(function(e,docs){
+      console.log(docs);
+      res.locals.arr = docs;
+      res.locals.length = docs.length;
+      res.locals.i = 0;
+      res.locals.category = req.query.index;
+      res.locals.name = req.session.name;
+      res.render( 'users/category');
+    });
+  }
+});
+
 
 module.exports = router;

@@ -6,21 +6,23 @@
   </head>
   <body>
     <% if (username && authenticated) { %>
-      <a href="/users/addQuestion">提問</a>
       <a href="/users/userinfo">帳號管理</a>
       <a href="/users/signout">登出</a>
+      <a href="/users/createCategory">建立分類</a>
     <% } else { %>
       <a href="/users/signin">登入</a>
       <a href="/users/register">註冊</a>
     <% } %>
-    <% if (username && authenticated) { %>
-      <% for(i ; i < length ; i++){ %>
-        <p><%=arr[i].name%></p>
-        <p><%=arr[i].question%></p>
-        <p><%=arr[i].article%></p>
-        <a href="/users/editQuestion?id=<%= arr[i].id %>">>編輯</a>
-        <a href="#">刪除</a>
+
+    <div>
+      <% if (username && authenticated) { %>
+        <% for(i ; i < length ; i++){ %>
+          <div>
+            <a href="/users/category?index=<%= arr[i].index %>"><%=arr[i].index%></a>
+          </div>
+        <% } %>
       <% } %>
-    <% } %>
+    </div>
+
   </body>
 </html>

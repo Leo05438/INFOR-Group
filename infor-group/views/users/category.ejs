@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    <a href="/users/addQuestion?category=<%= category %>">提問</a>
+    <% for(i ; i < length ; i++){ %>
+      <div><a href="/users/userinfo?name=<%=arr[i].name%>"><%=arr[i].name%></a></div>
+      <p><%=arr[i].title%></p>
+      <%-arr[i].content%>
+      <%if(name == arr[i].name){%>
+        <a href="/users/editQuestion?id=<%= arr[i].id %>">編輯</a>
+        <a href="#">刪除</a>
+      <%}%>
+    <% } %>
+  </body>
+</html>

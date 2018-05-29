@@ -2,9 +2,15 @@ require('../models/user');
 var express = require('express');
 var router = express.Router();
 var mongoose = require('mongoose');
+var url = require('url');
+var path = require('path');
+var multer = require('multer');
 var Users = mongoose.model('User');
 var Questions = mongoose.model('Question');
+var Categories = mongoose.model('Category');
 
+
+//註冊
 router.post('/loginr', function(req, res, next) {
     if ((!req.body.user) || (!req.body.passwd)) {
       console.log('資料不完整')
@@ -13,12 +19,10 @@ router.post('/loginr', function(req, res, next) {
       res.redirect('/users/register');
       return;
     }
-
     Users.find().lean().exec(function(e,docs){
       var users = docs;
       var index = 0;
       var total = users.length;
-
       for ( index ; index < total ; index++ ) {
         var user = users[index];
         if ( req.body.user == user.username ) {
@@ -34,7 +38,9 @@ router.post('/loginr', function(req, res, next) {
           req.session.logined = true;
           new Users({
               username: req.session.name,
-              passwd: req.session.passwd
+              passwd: req.session.passwd,
+              id: total+1,
+              brief: "我討厭LL"
           }).save( function( err ){
               if (err) {
                   console.log('Fail to save to DB.');
@@ -50,8 +56,9 @@ router.post('/loginr', function(req, res, next) {
     });
 });
 
-router.post('/login', function(req, res, next) {
 
+//登入
+router.post('/login', function(req, res, next) {
     if ((!req.body.user) || (!req.body.passwd)) {
       console.log('資料不完整');
       req.session.rlErro = 1;
@@ -59,12 +66,10 @@ router.post('/login', function(req, res, next) {
       res.redirect('/users/signin');
       return;
     }
-
     Users.find().lean().exec(function(e,docs){
       var users = docs;
       var index = 0;
       var total = users.length;
-
       for ( index ; index < total ; index++ ) {
         var user = users[index];
         if ( req.body.user == user.username ) {
@@ -93,80 +98,187 @@ router.post('/login', function(req, res, next) {
     });
 });
 
+
+//提問
 router.post('/addQuestion',function(req, res, next){
-    Questions.find().lean().exec(function(e,docs){
-      var total = docs.length;
-      new Questions({
-          name: req.session.name,
-          question: req.body.question,
-          article:req.body.article,
-          id: total+1
-      }).save( function( err ){
-          if (err) {
-              console.log('Fail to save to DB.');
-              return;
-          }
-          console.log('Save to DB.');
-      });
+    if (!req.session.logined) {
       res.redirect('/');
       return;
-    })
+    }
+    if (!req.query.category || (req.query.category == "all")) {
+      Questions.find().lean().exec(function(e,docs){
+        var total = docs.length;
+        new Questions({
+            name: req.session.name,
+            title: req.body.title,
+            content:req.body.content,
+            id: total+1,
+            category: "all"
+        }).save( function( err ){
+            if (err) {
+                console.log('Fail to save to DB.');
+                return;
+            }
+            console.log('Save to DB.');
+        });
+        res.redirect('/');
+        return;
+      })
+    }
+    else {
+      Categories.find().lean().exec(function(e,categories){
+          var index = 0;
+          var total = categories.length;
+          for ( index ; index < total ; index++ ) {
+            var category = categories[index];
+            if ( req.query.category == category.index ) {
+              break;
+            }
+            else if (index == total-1) {
+              res.redirect('/');
+              return;
+            }
+          }
+          Questions.find().lean().exec(function(e,docs){
+            var total = docs.length;
+            new Questions({
+                name: req.session.name,
+                title: req.body.title,
+                content: req.body.content,
+                id: total+1,
+                category: req.query.category
+            }).save( function( err ){
+                if (err) {
+                    console.log('Fail to save to DB.');
+                    return;
+                }
+                console.log('Save to DB.');
+            });
+            res.redirect('/');
+            return;
+          })
+      })
+    }
 });
 
+
+//上傳圖片
+var storage = multer.diskStorage({
+    destination: function(req, file, callback) {
+        callback(null, './uploads');
+    },
+    filename: function(req, file, callback) {
+        var name = Date.now() + path.extname(file.originalname);
+        req.body.link = name;
+        req.body.attachment = file.originalname;
+        callback(null, name);
+    }
+});
+var upload = multer({ storage: storage });
+
+router.post('/upload', upload.single('upload'), function(req, res, next) {
+    res.json({
+        "uploaded": 1,
+        "fileName": req.body.attachment,
+        "url": url.resolve('/upload/', req.body.link)
+    });
+});
+
+
+//更改密碼
 router.post('/changePasswd',function(req, res, next){
+  if (!req.session.logined) {
+    res.redirect('/');
+    return;
+  }
   Users.update({username:req.session.name},{passwd:req.body.passwd},function(){
     req.session.passwd = req.body.passwd;
     res.redirect('/users/userinfo');
   })
 });
 
+
+//編輯提問
 router.post('/editQuestion',function(req,res,next){
-  Questions.update({id:req.query.id},{question:req.body.question,article:req.body.article},function(){
+  if (!req.session.logined) {
     res.redirect('/');
-  })
-})
-
-router.post('/androidLogin',function(req,res,next){
-
-  Users.find().lean().exec(function(e,docs){
-    var users = docs;
-    var index = 0;
-    var total = users.length;
-
-    for ( index ; index < total ; index++ ) {
-      var user = users[index];
-      if ( req.body.user == user.username ) {
-        if ( req.body.passwd != user.passwd ) {
-          console.log('密碼錯誤');
-          res.locals.logined = false;
-          res.locals.lErro = 1;
-          res.locals.lErroType = 3;
-          res.locals.name = false;
-          res.locals.passwd = false;
-          res.render('android/login');
+    return;
+  }
+  Questions.find().lean().exec(function(e,docs){
+    if (req.query.id > docs.length) {
+      res.redirect('/');
+      return;
+    }
+    else {
+      Questions.findOne({id:req.query.id},function(e,doc){
+        if (req.session.name != doc.name) {
+          res.redirect('/');
           return;
         }
-        res.locals.logined = true;
-        res.locals.lErro = 0;
-        res.locals.lErroType = 0;
-        res.locals.name = req.body.user;
-        res.locals.passwd = req.body.passwd;
-        console.log('登入成功');
-        res.render('android/login');
-        return
-      }
-      if (index == total-1) {
-        console.log('名稱不存在');
-        res.locals.logined = false;
-        res.locals.lErro = 1;
-        res.locals.lErroType = 4;
-        res.locals.name = false;
-        res.locals.passwd = false;
-        res.render('android/login');
-        return;
-      }
+        else {
+          Questions.update({id:req.query.id},{title:req.body.title,content:req.body.content},function(){
+            res.redirect('/');
+            return;
+          });
+        }
+      });
     }
   });
 });
+
+
+//編輯簡介
+router.post('/editBrief',function(req, res, next){
+  if (!req.session.logined) {
+    res.redirect('/');
+    return;
+  }
+  Users.update({username:req.session.name},{brief:req.body.brief},function(){
+    res.redirect('/users/userinfo');
+  })
+});
+
+
+//建立分類
+router.post('/createCategory', function(req, res, next) {
+    if (!req.body.index) {
+      console.log('資料不完整')
+      req.session.ccErro = 1;
+      req.session.ccErroType = 1;
+      res.redirect('/users/createCategory');
+      return;
+    }
+    Categories.find().lean().exec(function(e,docs){
+      var ctgs = docs;
+      var index = 0;
+      var total = ctgs.length;
+      for ( index ; index < total ; index++ ) {
+        var ctg = ctgs[index];
+        if ( req.body.index == ctg.index ) {
+          console.log('分類已被使用');
+          req.session.ccErro = 1;
+          req.session.ccErroType = 2;
+          res.redirect('/users/createCategory');
+          return;
+        }
+        if (index == total-1) {
+          new Categories({
+              index: req.body.index,
+              id: total+1
+          }).save( function( err ){
+              if (err) {
+                  console.log('Fail to save to DB.');
+                  return;
+              }
+              console.log('Save to DB.');
+          });
+          console.log('建立成功');
+          res.redirect('/');
+          return;
+        }
+      }
+    });
+});
+
 
 module.exports = router;

@@ -9,6 +9,7 @@ var cookieSession = require('cookie-session')
 var routes = require('./routes/index');
 var users = require('./routes/users');
 var apis = require('./routes/apis');
+var android = require('./routes/android');
 
 var app = express();
 
@@ -23,6 +24,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/upload', express.static(path.join(__dirname, 'uploads')));
 
 // 啟用cookieSession
 app.use(cookieSession({
@@ -33,6 +35,7 @@ app.use(cookieSession({
 app.use('/', routes);
 app.use('/users', users);
 app.use('/apis', apis);
+app.use('/android',android);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
