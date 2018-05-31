@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+      <div><a href="/users/userinfo?name=<%=doc.name%>"><%=doc.name%></a></div>
+      <%-doc.content%>
+      <%if(name == doc.name){%>
+        <a href="/users/editQuestion?id=<%= doc.id %>">編輯</a>
+        <a href="#">刪除</a>
+      <%}%>
+  </body>
+</html>

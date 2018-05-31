@@ -9,6 +9,7 @@
     <%if(passwd){%>
       <p>用戶密碼：<%= passwd %></p>
     <%}%>
+    <img src="<%= icon %>" alt="">
     <p>簡介：<%= brief %></p>
     <%if(sessUsername == username){%>
       <form class="" action="/apis/editIcon" method="post" enctype="multipart/form-data">

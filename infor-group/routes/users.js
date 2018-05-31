@@ -70,6 +70,7 @@ router.get('/userinfo',function(req, res, next){
       res.locals.category = req.query.index;
     });
     Users.findOne({username:req.session.name},function(e,doc){
+      res.locals.icon = doc.icon;
       res.locals.brief = doc.brief;
       res.render('users/userinfo');
     });
@@ -193,5 +194,17 @@ router.get('/category',function(req, res, next){
   }
 });
 
+//文章內容
+router.get('/detail',function(req, res, next){
+  if (!req.session.logined) {
+    res.redirect('/');
+    return;
+  }
+  Questions.findOne({id:req.query.id},function(e,doc){
+    res.locals.doc = doc;
+    res.locals.name = req.session.name;
+    res.render('users/detail');
+  });
+});
 
 module.exports = router;
