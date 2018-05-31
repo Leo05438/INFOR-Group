@@ -6,11 +6,21 @@
   </head>
   <body>
     <p>用戶名稱：<%= username %></p>
-    <%if(passwd){%><p>用戶密碼：<%= passwd %></p><%}%>
+    <%if(passwd){%>
+      <p>用戶密碼：<%= passwd %></p>
+    <%}%>
     <p>簡介：<%= brief %></p>
-    <%if(sessUsername == username){%><a href="/users/editBrief">編輯簡介</a><%}%>
+    <%if(sessUsername == username){%>
+      <form class="" action="/apis/editIcon" method="post" enctype="multipart/form-data">
+        <input type="file" name="upload" value="">
+        <input type="submit" name="" value="submit">
+      </form>
+      <a href="/users/editBrief">編輯簡介</a>
+    <%}%>
     <a href="/">主頁</a>
-    <%if(sessUsername == username){%><a href="/users/changePasswd">更改密碼</a><%}%>
+    <%if(sessUsername == username){%>
+      <a href="/users/changePasswd">更改密碼</a>
+    <%}%>
     <% for(var i = 0 ; i < length ; i++){ %>
       <div><a href="/users/userinfo?name=<%=arr[i].name%>"><%=arr[i].name%></a></div>
       <p><%=arr[i].title%></p>

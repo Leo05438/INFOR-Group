@@ -8,6 +8,7 @@ var multer = require('multer');
 var Users = mongoose.model('User');
 var Questions = mongoose.model('Question');
 var Categories = mongoose.model('Category');
+var QuestionN = mongoose.model('QuestionN');
 
 
 //註冊
@@ -106,24 +107,27 @@ router.post('/addQuestion',function(req, res, next){
       return;
     }
     if (!req.query.category || (req.query.category == "all")) {
-      Questions.find().lean().exec(function(e,docs){
-        var total = docs.length;
-        new Questions({
-            name: req.session.name,
-            title: req.body.title,
-            content:req.body.content,
-            id: total+1,
-            category: "all"
-        }).save( function( err ){
-            if (err) {
-                console.log('Fail to save to DB.');
-                return;
-            }
-            console.log('Save to DB.');
+      QuestionN.find().lean().exec(function(e,doc){
+        var times = doc[0].times;
+        var ntimes = times+1;
+        QuestionN.update({times:times},{times:ntimes},function(){
+          new Questions({
+              name: req.session.name,
+              title: req.body.title,
+              content:req.body.content,
+              id: ntimes,
+              category: "all"
+          }).save( function( err ){
+              if (err) {
+                  console.log('Fail to save to DB.');
+                  return;
+              }
+              console.log('Save to DB.');
+          });
+          res.redirect('/');
+          return;
         });
-        res.redirect('/');
-        return;
-      })
+      });
     }
     else {
       Categories.find().lean().exec(function(e,categories){
@@ -139,24 +143,27 @@ router.post('/addQuestion',function(req, res, next){
               return;
             }
           }
-          Questions.find().lean().exec(function(e,docs){
-            var total = docs.length;
-            new Questions({
-                name: req.session.name,
-                title: req.body.title,
-                content: req.body.content,
-                id: total+1,
-                category: req.query.category
-            }).save( function( err ){
-                if (err) {
-                    console.log('Fail to save to DB.');
-                    return;
-                }
-                console.log('Save to DB.');
+          QuestionN.find().lean().exec(function(e,doc){
+            var times = doc[0].times;
+            var ntimes = times+1;
+            QuestionN.update({times:times},{times:ntimes},function(){
+              new Questions({
+                  name: req.session.name,
+                  title: req.body.title,
+                  content: req.body.content,
+                  id: ntimes,
+                  category: req.query.category
+              }).save( function( err ){
+                  if (err) {
+                      console.log('Fail to save to DB.');
+                      return;
+                  }
+                  console.log('Save to DB.');
+              });
+              res.redirect('/');
+              return;
             });
-            res.redirect('/');
-            return;
-          })
+          });
       })
     }
 });
@@ -177,6 +184,7 @@ var storage = multer.diskStorage({
 var upload = multer({ storage: storage });
 
 router.post('/upload', upload.single('upload'), function(req, res, next) {
+    console.log(url.resolve('/upload/', req.body.link));
     res.json({
         "uploaded": 1,
         "fileName": req.body.attachment,
@@ -280,5 +288,14 @@ router.post('/createCategory', function(req, res, next) {
     });
 });
 
+//變更頭貼
+router.post('/editIcon', upload.single('upload'), function(req, res, next) {
+  console.log(req.body.link);
+  console.log(url.resolve('/upload/', req.body.link));
+
+  Users.update({username:req.session.name},{icon:url.resolve('/upload/', req.body.link)},function(){
+    res.redirect('/users/userinfo');
+  })
+});
 
 module.exports = router;
