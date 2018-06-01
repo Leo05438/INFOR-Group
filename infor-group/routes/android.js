@@ -189,7 +189,7 @@ router.post('/userinfo',function(req, res, next){
       var total = users.length;
       for ( index ; index < total ; index++ ) {
         var user = users[index];
-        if ( req.query.user == user.username ) {
+        if ( req.query.name == user.username ) {
           break;
         }
         else if (index == total-1) {
