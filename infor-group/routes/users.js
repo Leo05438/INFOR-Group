@@ -67,7 +67,6 @@ router.get('/userinfo',function(req, res, next){
       else {
         res.locals.length = null;
       }
-      res.locals.category = req.query.index;
     });
     Users.findOne({username:req.session.name},function(e,doc){
       res.locals.icon = doc.icon;
@@ -76,18 +75,40 @@ router.get('/userinfo',function(req, res, next){
     });
   }
   else {
-    res.locals.username = req.query.name;
-    res.locals.sessUsername = req.session.name;
-    res.locals.passwd = null;
-    Questions.find({name:req.query.name}).lean().exec(function(e,docs){
-      res.locals.arr = docs;
-      res.locals.length = docs.length;
-      res.locals.category = req.query.index;
+    Users.find().lean().exec(function(e,docs){
+      var users = docs;
+      var index = 0;
+      var total = users.length;
+      for ( index ; index < total ; index++ ) {
+        var user = users[index];
+        if ( req.query.name == user.username ) {
+          break;
+        }
+        else if (index == total-1) {
+          console.log("jizz");
+          res.redirect('/');
+          return;
+        }
+      }
+      res.locals.username = req.query.name;
+      res.locals.sessUsername = req.session.name;
+      res.locals.passwd = null;
+      Questions.find({name:req.query.name}).lean().exec(function(e,docs){
+        res.locals.arr = docs;
+        if (docs.length) {
+          res.locals.length = docs.length;
+        }
+        else {
+          res.locals.length = null;
+        }
+      });
+      Users.find({username:req.query.name}).lean().exec(function(e,docs){
+          res.locals.icon = docs[0].icon;
+          res.locals.brief = docs[0].brief;
+        res.render('users/userinfo');
+      });
     });
-    Users.findOne({username:req.query.name},function(e,doc){
-      res.locals.brief = doc.brief;
-      res.render('users/userinfo');
-    });
+
   }
 });
 
@@ -116,7 +137,7 @@ router.get('/changePasswd',function(req, res, next){
 
 //編輯提問
 router.get('/editQuestion',function(req, res, next){
-  if (!req.session.logined) {
+  if ((!req.session.logined) || (!req.query.id)) {
     res.redirect('/');
     return;
   }
@@ -172,7 +193,6 @@ router.get('/category',function(req, res, next){
   }
   if (req.query.index == "all") {
     Questions.find().lean().exec(function(e,docs){
-      console.log(docs);
       res.locals.arr = docs;
       res.locals.length = docs.length;
       res.locals.i = 0;
@@ -183,7 +203,6 @@ router.get('/category',function(req, res, next){
   }
   else {
     Questions.find({category:req.query.index}).lean().exec(function(e,docs){
-      console.log(docs);
       res.locals.arr = docs;
       res.locals.length = docs.length;
       res.locals.i = 0;

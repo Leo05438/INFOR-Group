@@ -184,7 +184,6 @@ var storage = multer.diskStorage({
 var upload = multer({ storage: storage });
 
 router.post('/upload', upload.single('upload'), function(req, res, next) {
-    console.log(url.resolve('/upload/', req.body.link));
     res.json({
         "uploaded": 1,
         "fileName": req.body.attachment,
@@ -290,9 +289,6 @@ router.post('/createCategory', function(req, res, next) {
 
 //變更頭貼
 router.post('/editIcon', upload.single('upload'), function(req, res, next) {
-  console.log(req.body.link);
-  console.log(url.resolve('/upload/', req.body.link));
-
   Users.update({username:req.session.name},{icon:url.resolve('/upload/', req.body.link)},function(){
     res.redirect('/users/userinfo');
   })

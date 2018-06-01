@@ -12,7 +12,6 @@ router.get('/', function(req, res, next) {
     res.locals.username = req.session.name ;
     res.locals.authenticated = req.session.logined;
     Categories.find().lean().exec(function(e,docs){
-      console.log(docs);
       res.locals.arr = docs;
       res.locals.length = docs.length;
       res.locals.i = 0;
