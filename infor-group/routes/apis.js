@@ -207,29 +207,31 @@ router.post('/changePasswd',function(req, res, next){
 
 //編輯提問
 router.post('/editQuestion',function(req,res,next){
-  if (!req.session.logined) {
+  if ((!req.session.logined) || (!req.query.id)) {
     res.redirect('/');
     return;
   }
-  Questions.find().lean().exec(function(e,docs){
-    if (req.query.id > docs.length) {
-      res.redirect('/');
-      return;
-    }
-    else {
-      Questions.findOne({id:req.query.id},function(e,doc){
-        if (req.session.name != doc.name) {
-          res.redirect('/');
-          return;
-        }
-        else {
-          Questions.update({id:req.query.id},{title:req.body.title,content:req.body.content},function(){
+  QuestionN.find().lean().exec(function(e,times){
+    Questions.find().lean().exec(function(e,docs){
+      if (req.query.id > times[0].times) {
+        res.redirect('/');
+        return;
+      }
+      else {
+        Questions.findOne({id:req.query.id},function(e,doc){
+          if (req.session.name != doc.name) {
             res.redirect('/');
             return;
-          });
-        }
-      });
-    }
+          }
+          else {
+            Questions.update({id:req.query.id},{title:req.body.title,content:req.body.content},function(){
+              res.redirect('/');
+              return;
+            });
+          }
+        });
+      }
+    });
   });
 });
 

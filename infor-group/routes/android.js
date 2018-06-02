@@ -222,7 +222,7 @@ router.post('/userinfo',function(req, res, next){
 
 //編輯簡介(預設)(user)
 router.post('/editBriefO',function(req, res, next){
-  if (!req.session.name) {
+  if (!req.body.user) {
     console.log('資料不完整')
     res.json({
       error : true
@@ -230,10 +230,18 @@ router.post('/editBriefO',function(req, res, next){
     return;
   }
   Users.findOne({username:req.body.user},function(e,doc){
-    res.json({
-      brief : doc.brief
-    });
-    return;
+    if (doc) {
+      res.json({
+        brief : doc.brief
+      });
+      return;
+    }
+    else {
+      res.json({
+        error : "無使用者"
+      });
+      return;
+    }
   })
 });
 
@@ -262,12 +270,7 @@ router.post('/editBrief',function(req, res, next){
           return;
         }
         console.log('登入成功');
-        Users.update({username:req.body.user},{brief:req.body.brief},function(){
-          res.json({
-            error: false
-          });
-          return
-        })
+        break
       }
       if (index == total-1) {
         console.log('名稱不存在');
@@ -277,50 +280,56 @@ router.post('/editBrief',function(req, res, next){
         return;
       }
     }
+    Users.update({username:req.body.user},{brief:req.body.brief},function(){
+      res.json({
+        error: false
+      });
+      return
+    })
   });
 });
 
 //變更頭貼(user,passwd,imgfile)
-router.post('/editIcon', upload.single('upload'), function(req, res, next) {
-  console.log(req.body.link);
-  console.log(url.resolve('/upload/', req.body.link));
-  Users.find().lean().exec(function(e,docs){
-    var users = docs;
-    var index = 0;
-    var total = users.length;
-
-    for ( index ; index < total ; index++ ) {
-      var user = users[index];
-      if ( req.body.user == user.username ) {
-        if ( req.body.passwd != user.passwd ) {
-          console.log('密碼錯誤');
-          res.json({
-            error: true
-          });
-          return;
-        }
-        console.log('登入成功');
-        Users.update({username:req.body.user},{icon:url.resolve('/upload/', req.body.link)},function(){
-          res.json({
-            error: false
-          });
-          return
-        })
-      }
-      if (index == total-1) {
-        console.log('名稱不存在');
-        res.json({
-          error: true
-        });
-        return;
-      }
-    }
-  });
-});
+// router.post('/editIcon', upload.single('upload'), function(req, res, next) {
+//   console.log(req.body.link);
+//   console.log(url.resolve('/upload/', req.body.link));
+//   Users.find().lean().exec(function(e,docs){
+//     var users = docs;
+//     var index = 0;
+//     var total = users.length;
+//
+//     for ( index ; index < total ; index++ ) {
+//       var user = users[index];
+//       if ( req.body.user == user.username ) {
+//         if ( req.body.passwd != user.passwd ) {
+//           console.log('密碼錯誤');
+//           res.json({
+//             error: true
+//           });
+//           return;
+//         }
+//         console.log('登入成功');
+//         Users.update({username:req.body.user},{icon:url.resolve('/upload/', req.body.link)},function(){
+//           res.json({
+//             error: false
+//           });
+//           return
+//         })
+//       }
+//       if (index == total-1) {
+//         console.log('名稱不存在');
+//         res.json({
+//           error: true
+//         });
+//         return;
+//       }
+//     }
+//   });
+// });
 
 //提問(query.category,user,passwd,title,content,)
 router.post('/addQuestion',function(req, res, next){
-  if ((!req.body.user) || (!req.body.passwd)|| (!req.body.title)|| (!req.body.content)) {
+  if ((!req.body.user) || (!req.body.passwd)|| (!req.body.title) || (!req.body.content)) {
     console.log('資料不完整')
     res.json({
       error : true
@@ -343,72 +352,7 @@ router.post('/addQuestion',function(req, res, next){
           return;
         }
         console.log('登入成功');
-        if (!req.query.category || (req.query.category == "all")) {
-          QuestionN.find().lean().exec(function(e,doc){
-            var times = doc[0].times;
-            var ntimes = times+1;
-            QuestionN.update({times:times},{times:ntimes},function(){
-              new Questions({
-                  name: req.body.user,
-                  title: req.body.title,
-                  content:req.body.content,
-                  id: ntimes,
-                  category: "all"
-              }).save( function( err ){
-                  if (err) {
-                      console.log('Fail to save to DB.');
-                      return;
-                  }
-                  console.log('Save to DB.');
-              });
-              res.json({
-                error: false
-              });
-              return;
-            });
-          });
-        }
-        else {
-          Categories.find().lean().exec(function(e,categories){
-            var index = 0;
-            var total = categories.length;
-            for ( index ; index < total ; index++ ) {
-              var category = categories[index];
-              if ( req.query.category == category.index ) {
-                break;
-              }
-              else if (index == total-1) {
-                res.json({
-                  error: true
-                });
-                return;
-              }
-            }
-            QuestionN.find().lean().exec(function(e,doc){
-              var times = doc[0].times;
-              var ntimes = times+1;
-              QuestionN.update({times:times},{times:ntimes},function(){
-                new Questions({
-                    name: req.body.user,
-                    title: req.body.title,
-                    content: req.body.content,
-                    id: ntimes,
-                    category: req.query.category
-                }).save( function( err ){
-                    if (err) {
-                        console.log('Fail to save to DB.');
-                        return;
-                    }
-                    console.log('Save to DB.');
-                });
-                res.json({
-                  error: false
-                });
-                return;
-              });
-            });
-          })
-        }
+        break;
       }
       if (index == total-1) {
         console.log('名稱不存在');
@@ -418,20 +362,86 @@ router.post('/addQuestion',function(req, res, next){
         return;
       }
     }
+    if (!req.query.category || (req.query.category == "all")) {
+      QuestionN.find().lean().exec(function(e,doc){
+        var times = doc[0].times;
+        var ntimes = times+1;
+        QuestionN.update({times:times},{times:ntimes},function(){
+          new Questions({
+              name: req.body.user,
+              title: req.body.title,
+              content:req.body.content,
+              id: ntimes,
+              category: "all"
+          }).save( function( err ){
+              if (err) {
+                  console.log('Fail to save to DB.');
+                  return;
+              }
+              console.log('Save to DB.');
+          });
+          res.json({
+            error: false
+          });
+          return;
+        });
+      });
+    }
+    else {
+      Categories.find().lean().exec(function(e,categories){
+        var index = 0;
+        var total = categories.length;
+        for ( index ; index < total ; index++ ) {
+          var category = categories[index];
+          if ( req.query.category == category.index ) {
+            break;
+          }
+          else if (index == total-1) {
+            res.json({
+              error: true
+            });
+            return;
+          }
+        }
+        QuestionN.find().lean().exec(function(e,doc){
+          var times = doc[0].times;
+          var ntimes = times+1;
+          QuestionN.update({times:times},{times:ntimes},function(){
+            new Questions({
+                name: req.body.user,
+                title: req.body.title,
+                content: req.body.content,
+                id: ntimes,
+                category: req.query.category
+            }).save( function( err ){
+                if (err) {
+                    console.log('Fail to save to DB.');
+                    return;
+                }
+                console.log('Save to DB.');
+            });
+            res.json({
+              error: false
+            });
+            return;
+          });
+        });
+      })
+    }
   });
 });
 
 //上傳圖片(imgfile)
-router.post('/upload', upload.single('upload'), function(req, res, next) {
-    console.log(url.resolve('/upload/', req.body.link));
-    res.json({
-        "url": url.resolve('/upload/', req.body.link)
-    });
-});
+// router.post('/upload', upload.single('upload'), function(req, res, next) {
+//     console.log(url.resolve('/upload/', req.body.link));
+//     res.json({
+//         "url": url.resolve('/upload/', req.body.link)
+//     });
+// });
 
-//編輯提問(預設)
-router.post('/editQuestionO',function(req, res, next){
-  if ((!req.body.user) || (!req.body.passwd) || (!req.query.id)) {
+//編輯提問(預設)(query.id)
+router.get('/editQuestionO',function(req, res, next){
+  if (!req.query.id) {
     console.log('資料不完整')
     res.json({
       error : true
@@ -450,7 +460,7 @@ router.post('/editQuestionO',function(req, res, next){
 
 //編輯提問(query.id,user,passwd,title,content)
 router.post('/editQuestion',function(req,res,next){
-  if ((!req.body.user) || (!req.body.passwd)) {
+  if ((!req.body.user) || (!req.body.passwd) || (!req.query.id) || (!req.body.title) || (!req.body.content)) {
     console.log('資料不完整')
     res.json({
       error : true
@@ -473,32 +483,7 @@ router.post('/editQuestion',function(req,res,next){
           return;
         }
         console.log('登入成功');
-        Questions.find().lean().exec(function(e,docs){
-          if (req.query.id > docs.length) {
-            res.json({
-              error: true
-            });
-            return;
-          }
-          else {
-            Questions.findOne({id:req.query.id},function(e,doc){
-              if (req.body.user != doc.name) {
-                res.json({
-                  error: true
-                });
-                return;
-              }
-              else {
-                Questions.update({id:req.query.id},{title:req.body.title,content:req.body.content},function(){
-                  res.json({
-                    error: false
-                  });
-                  return;
-                });
-              }
-            });
-          }
-        });
+        break;
       }
       if (index == total-1) {
         console.log('名稱不存在');
@@ -508,12 +493,43 @@ router.post('/editQuestion',function(req,res,next){
         return;
       }
     }
+    QuestionN.find().lean().exec(function(e,times){
+      Questions.find().lean().exec(function(e,docs){
+        if (req.query.id > times[0].times) {
+          res.json({
+            error: true,
+            erroType:1
+          });
+          return;
+        }
+        else {
+          Questions.findOne({id:req.query.id},function(e,doc){
+            if (req.body.user != doc.name) {
+              res.json({
+                error: true,
+                erroType:2
+              });
+              return;
+            }
+            else {
+              Questions.update({id:req.query.id},{title:req.body.title,content:req.body.content},function(){
+                res.json({
+                  error: false
+                });
+                return;
+              });
+            }
+          });
+        }
+      });
+    });
   });
 });
 
 //建立分類(預設)
 router.get('/createCategory',function(req, res, next){
   Categories.find().lean().exec(function(e,docs){
+    console.log(docs);
     res.json({
       category : docs
     });
@@ -569,9 +585,8 @@ router.post('/createCategory', function(req, res, next) {
 
 //分類
 router.get('/category',function(req, res, next){
-  if (req.query.index == "all") {
+  if ((req.query.index == "all") || (!req.query.index)) {
     Questions.find().lean().exec(function(e,docs){
-      console.log(docs);
       res.locals.arr = docs;
       res.locals.category = req.query.index;
       res.json({
@@ -593,21 +608,21 @@ router.get('/category',function(req, res, next){
   }
 });
 
-//文章內容
-//router.get('/detail',function(req, res, next){
-  //if ((!req.body.user) || (!req.body.passwd)) {
-    //console.log('資料不完整')
-    //res.json({
-      //error : true
-    //});
-    //return;
-  //}
-  //Questions.findOne({id:req.query.id},function(e,doc){
-    //res.locals.doc = doc;
-    //res.locals.name = req.session.name;
-    //res.render('users/detail');
-  //});
-//});
+// 文章內容
+// router.get('/detail',function(req, res, next){
+//   if ((!req.body.user) || (!req.body.passwd)) {
+//     console.log('資料不完整')
+//     res.json({
+//       error : true
+//     });
+//     return;
+//   }
+//   Questions.findOne({id:req.query.id},function(e,doc){
+//     res.locals.doc = doc;
+//     res.locals.name = req.session.name;
+//     res.render('users/detail');
+//   });
+// });
 
 //首頁
 router.get('/index', function(req, res, next) {
