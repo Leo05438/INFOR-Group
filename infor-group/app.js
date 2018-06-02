@@ -6,7 +6,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var cookieSession = require('cookie-session');
 var helmet = require('helmet');
-
+var socket_io = require("socket.io")
 var routes = require('./routes/index');
 var users = require('./routes/users');
 var apis = require('./routes/apis');
@@ -45,7 +45,11 @@ app.use(function(req, res, next) {
   err.status = 404;
   next(err);
 });
+// Socket.io
+var io = socket_io();
+app.io = io;
 
+var routes = require('./routes/socket')(io);
 // error handlers
 
 // development error handler

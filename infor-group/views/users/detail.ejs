@@ -1,15 +1,379 @@
-<!DOCTYPE html>
+<!--<!DOCTYPE html>
 <html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
     <title></title>
   </head>
   <body>
-      <div><a href="/users/userinfo?name=<%=doc.name%>"><%=doc.name%></a></div>
-      <%-doc.content%>
-      <%if(name == doc.name){%>
-        <a href="/users/editQuestion?id=<%= doc.id %>">編輯</a>
+      <div><a href="/users/userinfo?name=<=doc.name%>"><=doc.name%></a></div>
+      <-doc.content%>
+      <if(name == doc.name){%>
+        <a href="/users/editQuestion?id=<= doc.id %>">編輯</a>
         <a href="#">刪除</a>
-      <%}%>
+      <}%>
   </body>
+</html>-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>留言板模板</title>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.0/semantic.min.css"></link>
+</head>
+
+<body>
+    <header>
+    </header>
+    <div class="ui grey fixed inverted menu">
+        <% if(username) {%>
+            <div class="ui container">
+                <a href="#" class="header item">
+    <img class="user icon" src="<%=usericon%>">
+  </a>
+                <a href="/users/userinfo?name=<%=username%>" class="item">userinfo</a>
+                <a href="/" class="item">index</a>
+                <button href="/users/signout" class="ui teal button right header item">logout</button>
+                <%}else{%>
+                    <button href="/users/signin" class="ui teal button right header item">login</button>
+                    <button href="/users/register" class="ui teal button right header item">register</button>
+                    <%}%>
+            </div>
+    </div>
+    <div class="ui internally celled grid">
+        <div class="three wide column"></div>
+        <div id="cc" class="ten wide column">
+            <div class="ui large comments">
+                <div class="comment">
+                                    
+                               <div class="ui internally celled grid">
+                                    <div class="row">
+                                        <div class="three wide column">
+                                            <img class="ui image" src="<%=arr.icon%>" height="70px" width="80px">
+                                        </div>
+                                        <div class="ten wide column">
+                                        <div class="content">
+                                            <a class="author" href="/users/userinfo?name=<%=arr.name%>">
+                                                <%=arr.name%>
+                                            </a>
+                                            <div class="metadata">
+                                                <span class="date"><%=arr.created%></span>
+                                            </div>
+                                            <div class="text">
+                                                <%-arr.content%>
+                                            </div>
+                                            <% if(username==arr.name){%>
+                                                <div class="actions" href="/users/editQuestion?id=<%= arr.id %>">
+                                                    <a>edit</a>
+                                                </div>
+                                                <div class="actions" @click="removecontent4()">
+                                                    <a>delete</a>
+                                                </div>
+                                                <%}%>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                    <div class="comments">
+                        <div class="comment" v-for="(msg,index) in message">
+                            <div class="ui internally celled grid">
+                                <div class="row">
+                                    <div class="three wide column">
+                                        <img class="ui image" v-bind:src="msg.icon" height="70px" width="80px">
+                                    </div>
+                                    <div class="ten wide column">
+                                        <div class="content">
+                                            <a class="author">{{msg.name}}</a>
+                                            <div class="metadata">
+                                                <span class="date">{{msg.time}}</span>
+                                            </div>
+                                            <div class="text">
+                                                {{msg.title}}
+                                            </div>
+                                            <div v-if="msg.name == <%=username%>">
+                                                <div class="actions">
+                                                    <a @click="removecontent3(index,msg.id)">delete</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ui large icon input">
+                            <input v-model="newmsg" type="text" />
+                            <i class="bug icon"></i>
+                        </div>
+                        <button @click="addcontent3()" class="ui primary button">提交</button>
+                        <br>
+                        <br>
+                        <br>
+                    </div>
+                </div>
+                    <div class="comment" v-for="(content,index) in contents">
+                        <div class="ui internally celled grid">
+                                    <div class="row">
+                                        <div class="three wide column">
+                                            <img class="ui image" v-bind:src="content.icon" height="70px" width="80px">
+                                        </div>
+                                        <div class="ten wide column">
+                        <div class="content">
+                            <a class="author">{{content.name}}</a>
+                            <div class="metadata">
+                                <span class="date">{{content.time}}</span>
+                            </div>
+                            <div class="text">
+                                {{content.title}}
+                            </div>
+                            <span v-if="content.see">
+                            <div class="ui large icon input">
+                            <input v-model="content.title" type="text" />
+                                <i class="bug icon"></i>
+                            </div>
+                            <button @click="editcontent1(content.title)" class="ui primary button">修改</button>
+                            <button @click="noeditcontent1(index)" class="ui red button">取消</button>
+                                <br><br><br>          
+                        </span>
+                            <div v-if="content.name==<%=username%>">
+                                <div class="actions">
+                                    <a @click="removecontent1(index,content.id)">delete</a>
+                                    <a @click="editsee(index)">edit</a>
+                                </div>
+                                <br>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                        <div class="comments">
+                            <div class="comment" v-for="(contents,indexx) in content.contentss">
+                                <div class="ui internally celled grid">
+                                    <div class="row">
+                                        <div class="three wide column">
+                                            <img class="ui image" v-bind:src="contents.icon" height="70px" width="80px">
+                                        </div>
+                                        <div class="ten wide column">
+                                            <div class="content">
+                                                <a class="author">{{contents.name}}</a>
+                                                <div class="metadata">
+                                                    <span class="date">{{contents.time}}</span>
+                                                </div>
+                                                <div class="text">
+                                                    {{contents.title}}
+                                                </div>
+                                                <div v-if="contents.name==<%=username%>">
+                                                    <div class="actions">
+                                                        <a @click="removecontent2(index,indexx,contents.id,content.id)">delete</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ui large icon input">
+                            <input v-model="content.newwcontents" type="text" />
+                            <i class="bug icon"></i>
+                        </div>
+                        <button @click="addcontent2(index)" class="ui primary button">提交</button>
+                        <br>
+                        <br>
+                        <br>
+                        <div class="three wide column"></div>
+                    </div>
+                    <form class="ui reply form">
+                        <div class="field">
+                            <textarea v-model="newcontent" placeholder="请输入留言..."></textarea>
+                        </div>
+                        <div onclick="aa.addcontent1()" class="ui blue labeled submit icon button">
+                            <i class="icon edit"></i> 新增留言
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <br>
+            <script src="https://unpkg.com/vue@2.2.6/dist/vue.js"></script>
+            <script type="text/javascript" src=/socket.io/socket.io.js></script>
+            <script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.js'></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.13/vue.min.js"></script>
+            <script src="https://unpkg.com/semantic-ui-vue/dist/umd/semantic-ui-vue.min.js"></script>
+            <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
+            <script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/locale/zh-tw.js'></script>
+            <script type="text/javascript">
+            var socket = io();
+            socket.on("addcontent1", function(content, _id, na, icon) { //回覆
+                aa.newid++
+                    aa.contents.push({
+                        id: _id,
+                        title: content,
+                        name: na, //修
+                        time: moment(moment().valueOf()).fromNow(),
+                        contentss: [],
+                        newwcontents: "",
+                        icon: icon,
+                        see: false
+                    })
+            })
+            socket.on("addcontent2", function(content, fromid, _id, na, icon) { //回覆中留言
+                aa.contents[fromid].contentss.push({
+                    id: _id,
+                    title: content,
+                    name: na, //修
+                    time: moment(moment().valueOf()).fromNow(),
+                    icon: icon,
+                    see: false
+                })
+            })
+            socket.on("addcontent3", function(content, na, _id, icon) { //問題中留言
+                aa.newmsgid++;
+                aa.message.push({
+                    id: _id,
+                    title: content,
+                    name: na,
+                    time: moment(moment().valueOf()).fromNow(),
+                    icon: icon,
+                    see: false
+                })
+            })
+            socket.on("removecontent1", function(index) { //刪除回覆
+                aa.removecontents1(index)
+            })
+            socket.on("removecontent2", function(fromindex, index) { //刪除回覆中留言
+                aa.removecontents2(fromindex, index)
+            })
+            socket.on("removecontent3", function(index) { //刪除問題中留言
+                aa.removecontents3(index)
+            })
+            socket.on("removecontent4", function() {
+                window.location.href = "http://localhost:3000/";
+            })
+            var aa = new Vue({
+                el: '#cc',
+                data: {
+                    message: [],
+                    contents: [],
+                    newcontent: "",
+                    newmsg: "",
+                    newid: 0,
+                    newmsgid: 0
+                },
+                /*watch:{
+                    contents:{
+                        handler:function(contents){
+                            contentsg.save(contents)
+                        }//,
+                        //deep:true
+                    }
+                },*/
+                methods: {
+                    addcontent1: function() { //回覆
+                        var value = this.newcontent && this.newcontent.trim()
+                        if (!value) {
+                            return
+                        }
+                        this.newcontent = ''
+                        socket.emit("addcontent1", value, "<%=username%>", "<%=arr.id%>", "<%=usericon%>")
+                    },
+                    addcontent2: function(i) { //回覆中留言
+                        //alert(i)
+                        var value = this.contents[i].newwcontents && this.contents[i].newwcontents.trim()
+                        var fromvalue = this.contents[i].title
+                        //alert(this.contents[i].contentsid)
+                        if (!value) {
+                            return
+                        }
+                        this.contents[i].newwcontents = ""
+                        socket.emit("addcontent2", value, i, "<%=username%>", this.contents[i].id, "<%=arr.id%>", "<%=usericon%>")
+                    },
+                    addcontent3: function() { //問題中留言
+                        var value = this.newmsg && this.newmsg.trim()
+                        if (!value) {
+                            return
+                        }
+                        this.newmsg = ""
+                        socket.emit("addcontent3", value, "<%=username%>", "<%=arr.id%>", "<%=usericon%>")
+                    },
+                    editcontent1: function(content) { //動態修改(未完)
+
+                    },
+                    editsee: function(index) {
+                        return this.contents[index].see = true;
+                    },
+                    noeditcontent1: function(index) {
+                        return this.contents[index].see = false
+                    },
+                    removecontent1: function(index, id) { //刪除回覆
+                        socket.emit("removecontent1", index, id, "<%=arr.id%>")
+                    },
+                    removecontent2: function(fromindex, index, id, fromid) { //刪除回覆中留言
+                        socket.emit("removecontent2", fromindex, index, id, fromid, "<%=arr.id%>")
+                    },
+                    removecontent3: function(index, id) { //刪除問題中留言
+                        socket.emit("removecontent3", index, id, "<%=arr.id%>")
+                    },
+                    removecontent4: function() { //刪除問題
+                        socket.emit("removecontent4", "<%=arr.id%>")
+                    },
+                    removecontents1: function(index) { //前端刪除
+                        return this.contents.splice(index, 1);
+                    },
+                    removecontents2: function(fromindex, index) {
+                        return this.contents[fromindex].contentss.splice(index, 1)
+                    },
+                    removecontents3: function(index) {
+                        return this.message.splice(index, 1);
+                    },
+                    init1: function(content, timee, na, _id, icon) { //頁面回覆初始化
+                        this.newid++
+                            this.contents.push({
+                                id: _id,
+                                title: content,
+                                name: na,
+                                time: moment(timee).fromNow(),
+                                contentss: [],
+                                newwcontents: "",
+                                icon: icon,
+                                see: false
+                            })
+                    },
+                    init2: function(content, timee, na, fromid, _id, icon) { //頁面回覆中留言初始化
+                        //alert(na)
+                        this.contents[fromid].contentss.push({
+                            id: _id,
+                            title: content,
+                            name: na,
+                            time: moment(timee).fromNow(),
+                            icon: icon,
+                            see: false
+                        })
+                    },
+                    init3: function(content, timee, na, _id, icon) { //頁面問題中留言初始化
+                        this.newmsgid++
+                            this.message.push({
+                                id: _id,
+                                title: content,
+                                name: na,
+                                time: moment(timee).fromNow(),
+                                icon: icon,
+                                see: false
+                            })
+                    }
+                },
+
+            })
+            <% for(i3;i3<arr.message.length;i3++){ %>
+            aa.init3("<%=arr.message[i3].content%>", <%=arr.message[i3].time%>, "<%=arr.message[i3].name%>", "<%=arr.message[i3].id%>", "<%=arr.message[i3].icon%>")
+            <% }%>
+            <% for(i1;i1<arr.reply.length;i1++){ %>
+            aa.init1("<%=arr.reply[i1].content%>", <%=arr.reply[i1].time%>, "<%=arr.reply[i1].name%>", "<%=arr.reply[i1].id%>", "<%=arr.reply[i1].icon%>")
+            <% for(i2=0;i2<arr.reply[i1].message.length;i2++){%>
+            aa.init2("<%=arr.reply[i1].message[i2].content%>", <%=arr.reply[i1].message[i2].time%>, "<%=arr.reply[i1].message[i2].name%>", <%=i1%>, "<%=arr.reply[i1].message[i2].id%>", "<%=arr.reply[i1].message[i2].icon%>")
+            <%}%>
+            <%}%>
+            </script>
+</body>
+
 </html>

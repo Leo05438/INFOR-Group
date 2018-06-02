@@ -102,7 +102,7 @@ router.post('/login', function(req, res, next) {
 
 //提問
 router.post('/addQuestion',function(req, res, next){
-    if (!req.session.logined) {
+    if ((!req.session.logined)||(!req.body.title)||(!req.body.content)) {
       res.redirect('/');
       return;
     }

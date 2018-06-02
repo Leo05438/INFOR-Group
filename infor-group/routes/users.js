@@ -67,11 +67,11 @@ router.get('/userinfo',function(req, res, next){
       else {
         res.locals.length = null;
       }
-    });
-    Users.findOne({username:req.session.name},function(e,doc){
-      res.locals.icon = doc.icon;
-      res.locals.brief = doc.brief;
-      res.render('users/userinfo');
+      Users.findOne({username:req.session.name},function(e,doc){
+        res.locals.icon = doc.icon;
+        res.locals.brief = doc.brief;
+        res.render('users/userinfo');
+      });
     });
   }
   else {
@@ -101,11 +101,11 @@ router.get('/userinfo',function(req, res, next){
         else {
           res.locals.length = null;
         }
-      });
       Users.find({username:req.query.name}).lean().exec(function(e,docs){
           res.locals.icon = docs[0].icon;
           res.locals.brief = docs[0].brief;
         res.render('users/userinfo');
+      });
       });
     });
 
@@ -198,7 +198,10 @@ router.get('/category',function(req, res, next){
       res.locals.i = 0;
       res.locals.category = req.query.index;
       res.locals.name = req.session.name;
-      res.render( 'users/category');
+      Users.findOne({username:req.session.name},function(err,doc){
+        res.locals.usericon=doc.icon
+        res.render( 'users/category');
+      })
     });
   }
   else {
@@ -208,7 +211,10 @@ router.get('/category',function(req, res, next){
       res.locals.i = 0;
       res.locals.category = req.query.index;
       res.locals.name = req.session.name;
-      res.render( 'users/category');
+      Users.findOne({username:req.session.name},function(err,doc){
+        res.locals.usericon=doc.icon
+        res.render( 'users/category');
+      })
     });
   }
 });
@@ -220,9 +226,17 @@ router.get('/detail',function(req, res, next){
     return;
   }
   Questions.findOne({id:req.query.id},function(e,doc){
-    res.locals.doc = doc;
-    res.locals.name = req.session.name;
-    res.render('users/detail');
+    res.locals.arr = doc;
+    res.locals.i1=0;
+    res.locals.i2=0;
+    res.locals.i3=0;
+    res.locals.username=req.session.name;
+    Users.findOne({username:req.session.name},function(err,doc){
+      res.locals.usericon=doc.icon
+      res.render('users/detail');
+    })
+    //res.locals.name = req.session.name;
+    
   });
 });
 
