@@ -22,7 +22,11 @@
 
     <script src="/assets/ckeditor/ckeditor.js"></script>
     <script>
-        CKEDITOR.replace( 'newQContent' );
+        CKEDITOR.plugins.addExternal("codesnippet", "https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.7.3/plugins/codesnippet/plugin.js", "");
+        CKEDITOR.replace("newQContent", {
+        extraPlugins: "codesnippet",
+        codeSnippet_theme: "monokai_sublime"
+        });
     </script>
   </body>
 </html>

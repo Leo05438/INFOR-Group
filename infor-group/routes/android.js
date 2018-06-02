@@ -608,27 +608,37 @@ router.get('/category',function(req, res, next){
   }
 });
 
-// 文章內容
-// router.get('/detail',function(req, res, next){
-//   if ((!req.body.user) || (!req.body.passwd)) {
-//     console.log('資料不完整')
-//     res.json({
-//       error : true
-//     });
-//     return;
-//   }
-//   Questions.findOne({id:req.query.id},function(e,doc){
-//     res.locals.doc = doc;
-//     res.locals.name = req.session.name;
-//     res.render('users/detail');
-//   });
-// });
+//文章內容(query.id)
+router.get('/detail',function(req, res, next){
+  if (!req.query.id) {
+    console.log('資料不完整')
+    res.json({
+      error : true
+    });
+    return;
+  }
+  Questions.findOne({id:req.query.id},function(e,doc){
+    res.json({
+      doc : doc
+    });
+    return;
+  });
+});
 
 //首頁
 router.get('/index', function(req, res, next) {
   Categories.find().lean().exec(function(e,docs){
     console.log(docs);
     res.locals.arr = docs;
+    res.json({
+      docs : docs,
+    });
+  });
+});
+
+//所有用戶
+router.get('/userlist', function(req, res, next) {
+  Users.find().lean().exec(function(e,docs){
     res.json({
       docs : docs,
     });
