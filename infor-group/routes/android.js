@@ -527,7 +527,7 @@ router.post('/editQuestion',function(req,res,next){
 });
 
 //建立分類(預設)
-router.get('/createCategory',function(req, res, next){
+router.get('/createCategoryO',function(req, res, next){
   Categories.find().lean().exec(function(e,docs){
     console.log(docs);
     res.json({
