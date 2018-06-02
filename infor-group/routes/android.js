@@ -537,7 +537,7 @@ router.get('/createCategory',function(req, res, next){
   });
 });
 
-//建立分類
+//建立分類(index)
 router.post('/createCategory', function(req, res, next) {
     if (!req.body.index) {
       console.log('資料不完整')
