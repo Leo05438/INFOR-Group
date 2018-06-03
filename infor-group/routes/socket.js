@@ -105,7 +105,7 @@ module.exports=function(io){
 		socket.on("addquestion",function(){
 			setTimeout(function(){
 				QuestionN.find().lean().exec(function(e,docs){
-				Questions.findOne({id:docs[0].times},function(err,doc){
+				Questions.findOne({id:docs[0].times+1},function(err,doc){
 					if(err){
 						console.log("nonojizz")
 					}else{
@@ -114,7 +114,7 @@ module.exports=function(io){
 						io.emit("addquestion",doc.name,doc.title,doc.content,doc.time,doc.id,doc.icon)
 					}
 				})
-			})},1000)
+			})},5000)
 
 			
 			

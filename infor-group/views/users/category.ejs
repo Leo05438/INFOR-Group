@@ -64,7 +64,7 @@
                <div style="font-size:20px" class="restrict" v-html="content.content"></div> 
                         <div v-if="'<%=name%>'==content.name">
               <div class="actions">
-                  <button v-bind:href="'/users/editQuestion?id='+content.id" class="ui teal basic button">edit</button>
+                  <a v-bind:href="'/users/editQuestion?id='+content.id" class="ui teal basic button">edit</a>
                   <button type="button" @click="removequestion(index,content.id)" class="mini ui negative basic button">delete</button>
               </div>
             </div>
@@ -143,9 +143,10 @@
         }
       })
       <%for(i;i<length;i++){%>
-var abc="<%-arr[i].content.replace(/([\r\n]+)+/g, "");%>"
+var abc="<%-arr[i].content.replace(/(?:\\[rn]|[\r\n]+)+/g, "").replace(/\"/g, "\\\"");%>"
+
 console.log(abc)
-ab.init(<%=arr[i].id%>,"<%=arr[i].name%>","<%=arr[i].title%>","<%-arr[i].content.replace(/(?:\\[rn]|[\r\n]+)+/g, "");%>","<%=arr[i].created%>","<%=arr[i].icon%>")
+ab.init(<%=arr[i].id%>,"<%=arr[i].name%>","<%=arr[i].title%>",abc,"<%=arr[i].created%>","<%=arr[i].icon%>")
         <%}%>
     </script>
   </body>

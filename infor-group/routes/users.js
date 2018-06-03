@@ -149,9 +149,14 @@ router.get('/editQuestion',function(req, res, next){
     res.locals.title = doc.title;
     res.locals.content = doc.content;
     res.locals.id = doc.id;
+    res.locals.name=req.session.name
+    Questions.findOne({name:req.session.name},function(err,doc){
+    res.locals.usericon=doc.icon
     res.render('users/editQuestion');
   })
-});
+  })
+  })
+
 
 
 //編輯簡介

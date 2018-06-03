@@ -4,8 +4,33 @@
     <meta charset="utf-8">
     <title></title>
     <script src="//code.jquery.com/jquery.min.js"></script>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.0/semantic.min.css"></link>
+    <style type="text/css">
+    body {
+      background-color: #F5F5DC;
+    }
+  </style>
   </head>
   <body>
+    <a href="/">主頁</a>
+<div class="ui grey fixed inverted menu">
+        <% if(name) {%>
+            <div class="ui container">
+                <a href="#" class="header item">
+    <img class="user icon" src="<%=usericon%>">
+  </a>
+                <a href="/users/userinfo" class="item">userinfo</a>
+                <a href="/" class="item">index</a>
+                <a href="/users/signout" class="ui teal button right header item">logout</a>
+                <%}else{%>
+                    <a href="/users/signin" class="ui teal button right header item">login</a>
+                    <a href="/users/register" class="ui teal button right header item">register</a>
+                    <%}%>
+            </div>
+    </div>
+    <div class="ui internally celled grid ">
+      <div class="four wide column"></div>
+      <div class="eight wide column">
     <form method="POST" action="/apis/editQuestion?id=<%= id %>">
         <div>
             <label>標題</label>
@@ -13,10 +38,12 @@
         </div>
         <div>
             <label>最新消息內容</label>
-            <textarea name="content" id="newQContent" value=<%= content %>></textarea>
+            <textarea name="content" id="newQContent" value=<%= content %>><%= content %></textarea>
         </div>
             <button type="submit">發佈</button>
     </form>
+  </div>
+</div>
   </body>
   <script src="/assets/ckeditor/ckeditor.js"></script>
   <script>
