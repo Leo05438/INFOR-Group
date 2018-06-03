@@ -47,7 +47,7 @@
         <div id="cc" class="ten wide column">
             <div class="ui large comments">
                 <div class="comment">
-                                    
+
                                <div class="ui internally celled grid">
                                     <div class="row">
                                         <div class="three wide column">
@@ -134,7 +134,7 @@
                             </div>
                             <button @click="editcontent1(content.title)" class="ui primary button">修改</button>
                             <button @click="noeditcontent1(index)" class="ui red button">取消</button>
-                                <br><br><br>          
+                                <br><br><br>
                         </span>
                             <div v-if="content.name==<%=username%>">
                                 <div class="actions">
@@ -297,7 +297,6 @@
                         socket.emit("addcontent3", value, "<%=username%>", "<%=arr.id%>", "<%=usericon%>")
                     },
                     editcontent1: function(content) { //動態修改(未完)
-
                     },
                     editsee: function(index) {
                         return this.contents[index].see = true;
@@ -362,7 +361,6 @@
                             })
                     }
                 },
-
             })
             <% for(i3;i3<arr.message.length;i3++){ %>
             aa.init3("<%=arr.message[i3].content%>", <%=arr.message[i3].time%>, "<%=arr.message[i3].name%>", "<%=arr.message[i3].id%>", "<%=arr.message[i3].icon%>")

@@ -3,8 +3,22 @@
   <head>
     <meta charset="utf-8">
     <title></title>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.0/semantic.min.css"></link>
   </head>
   <body>
+    <div class="ui grey fixed inverted menu">
+        <% if(username) {%>
+            <div class="ui container">
+
+                <a href="/users/userinfo?name=<%=username%>" class="item">userinfo</a>
+                <a href="/" class="item">index</a>
+                <button href="/users/signout" class="ui teal button right header item">logout</button>
+                <%}else{%>
+                    <button href="/users/signin" class="ui teal button right header item">login</button>
+                    <button href="/users/register" class="ui teal button right header item">register</button>
+                    <%}%>
+            </div>
+    </div>
     <% if (username && authenticated) { %>
       <a href="/users/userinfo">帳號管理</a>
       <a href="/users/signout">登出</a>
@@ -25,4 +39,6 @@
     </div>
 
   </body>
+  <script src="https://unpkg.com/semantic-ui-vue/dist/umd/semantic-ui-vue.min.js"></script>
+  <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
 </html>

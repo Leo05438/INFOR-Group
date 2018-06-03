@@ -637,12 +637,22 @@ router.get('/index', function(req, res, next) {
 });
 
 //所有用戶
-router.get('/userlist', function(req, res, next) {
-  Users.find().lean().exec(function(e,docs){
-    res.json({
-      docs : docs,
-    });
-  });
-});
+// router.get('/userlist', function(req, res, next) {
+//   Users.find().lean().exec(function(e,docs){
+//     var index = 0;
+//     var total = docs.length;
+//     var arr = [{username,id,brief,icon}];
+//     console.log(docs[index].username);
+//     for ( index ; index < total ; index++ ) {
+//       arr[index].username = docs[index].username;
+//       arr[index].id= docs[index].id;
+//       arr[index].brief= docs[index].brief;
+//       arr[index].icon= docs[index].icon;
+//     }
+//     res.json({
+//       docs : docs,
+//     });
+//   });
+// });
 
 module.exports = router;

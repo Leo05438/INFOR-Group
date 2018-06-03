@@ -7,7 +7,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   </head>
   <body>
-    <!--<div class="ui  mini grey  vertical  left visible sidebar menu"> 
+    <!--<div class="ui  mini grey  vertical  left visible sidebar menu">
   <a class="item">
     <i class="id card icon"></i>
     Home
@@ -54,9 +54,9 @@
               <div class="sub header">
                 <a  href="/users/detail?id=<%= arr[i].id %>" style="font-size:30px"><%=arr[i].title%></a>
              </div>
-           
+
                <div style="font-size:20px" class="restrict"><%-arr[i].content%></div>
-                        <% if(name==arr[i].name){ %>  
+                        <% if(name==arr[i].name){ %>
               <div class="actions">
                   <button href="/users/editQuestion?id=<%= arr[i].id %>" class="ui teal basic button">edit</button>
                   <button href="#" class="mini ui negative basic button">delete</button>
@@ -65,10 +65,9 @@
           </div>
           </td>
         </tr>
-
-        <%}%> 
+        <%}%>
       </tbody>
-      
+
     </table><a href="/users/addQuestion?category=<%= category %>">提問</a>
   </div>
   <div class="four wide column"></div>
