@@ -121,8 +121,11 @@ router.get('/addQuestion',function(req, res, next){
   }
   res.locals.name=req.session.name
   res.locals.category = req.query.category;
-  res.render('users/addQuestion');
-});
+  Questions.findOne({name:req.session.name},function(err,doc){
+    res.locals.usericon=doc.icon
+    res.render('users/addQuestion');
+  })
+  });
 
 
 //更改密碼

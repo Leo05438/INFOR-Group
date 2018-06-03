@@ -8,7 +8,21 @@
   <body>
     <div id="aa">
     <a href="/">主頁</a>
-
+<div class="ui grey fixed inverted menu">
+        <% if(name) {%>
+            <div class="ui container">
+                <a href="#" class="header item">
+    <img class="user icon" src="<%=usericon%>">
+  </a>
+                <a href="/users/userinfo" class="item">userinfo</a>
+                <a href="/" class="item">index</a>
+                <a href="/users/signout" class="ui teal button right header item">logout</a>
+                <%}else{%>
+                    <a href="/users/signin" class="ui teal button right header item">login</a>
+                    <a href="/users/register" class="ui teal button right header item">register</a>
+                    <%}%>
+            </div>
+    </div>
     <form method="POST" @submit="addquestion()" action="/apis/addQuestion?category=<%= category %>">
         <div>
             <label>標題</label>
@@ -37,7 +51,11 @@
                 }
             }
         })
-        CKEDITOR.replace( 'newQContent' );
+        CKEDITOR.plugins.addExternal("codesnippet", "https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.7.3/plugins/codesnippet/plugin.js", "");
+        CKEDITOR.replace("newQContent", {
+        extraPlugins: "codesnippet",
+        codeSnippet_theme: "monokai_sublime"
+        });
     </script>
   </body>
 </html>

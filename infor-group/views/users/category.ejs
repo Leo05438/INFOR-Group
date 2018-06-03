@@ -143,7 +143,8 @@
         }
       })
       <%for(i;i<length;i++){%>
-
+var abc="<%-arr[i].content.replace(/([\r\n]+)+/g, "");%>"
+console.log(abc)
 ab.init(<%=arr[i].id%>,"<%=arr[i].name%>","<%=arr[i].title%>","<%-arr[i].content.replace(/(?:\\[rn]|[\r\n]+)+/g, "");%>","<%=arr[i].created%>","<%=arr[i].icon%>")
         <%}%>
     </script>

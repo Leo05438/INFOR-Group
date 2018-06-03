@@ -152,11 +152,13 @@ router.post('/addQuestion',function(req, res, next){
             var times = doc[0].times;
             var ntimes = times+1;
             QuestionN.update({times:times},{times:ntimes},function(){
+              Users.findOne({username:req.session.name},function(err,doc){
               new Questions({
                   name: req.session.name,
                   title: req.body.title,
                   content: req.body.content,
                   id: ntimes,
+                  icon:doc.icon,
                   category: req.query.category
               }).save( function( err ){
                   if (err) {
@@ -167,6 +169,7 @@ router.post('/addQuestion',function(req, res, next){
               });
               res.redirect('/');
               return;
+            })
             });
           });
       })

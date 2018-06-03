@@ -20,7 +20,11 @@
   </body>
   <script src="/assets/ckeditor/ckeditor.js"></script>
   <script>
-      CKEDITOR.replace( 'newQContent' );
+      CKEDITOR.plugins.addExternal("codesnippet", "https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.7.3/plugins/codesnippet/plugin.js", "");
+        CKEDITOR.replace("newQContent", {
+        extraPlugins: "codesnippet",
+        codeSnippet_theme: "monokai_sublime"
+        });
   </script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/6.6.9/sweetalert2.min.js"></script>
   <script src="/assets/js/newannjs"></script>
