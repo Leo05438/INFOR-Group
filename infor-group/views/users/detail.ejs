@@ -209,7 +209,7 @@
             <script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/locale/zh-tw.js'></script>
             <script type="text/javascript">
             var socket = io();
-            socket.on("addcontent1", function(content, _id, na, icon) { //回覆
+            socket.on("addcontent1", function(content, na, _id, icon) { //回覆
                 aa.newid++
                     aa.contents.push({
                         id: _id,
