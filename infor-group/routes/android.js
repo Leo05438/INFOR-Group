@@ -618,11 +618,10 @@ router.get('/category',function(req, res, next){
      return;
    }
    Questions.findOne({id:req.query.id},function(e,doc){
-    res.locals.username=1
-    res.locals.usericon=1
-    res.locals.doc = doc;
-    res.locals.name = req.session.name;
-    res.render('users/detail');
+    res.json({
+      doc:doc
+    })
+    return;
   });
 });
 
