@@ -609,20 +609,20 @@ router.get('/category',function(req, res, next){
 });
 
 // 文章內容
-// router.get('/detail',function(req, res, next){
-//   if ((!req.body.user) || (!req.body.passwd)) {
-//     console.log('資料不完整')
-//     res.json({
-//       error : true
-//     });
-//     return;
-//   }
-//   Questions.findOne({id:req.query.id},function(e,doc){
-//     res.locals.doc = doc;
-//     res.locals.name = req.session.name;
-//     res.render('users/detail');
-//   });
-// });
+ router.get('/detail',function(req, res, next){
+   if ((!req.body.user) || (!req.body.passwd)) {
+     console.log('資料不完整')
+    res.json({
+       error : true
+     });
+     return;
+   }
+   Questions.findOne({id:req.query.id},function(e,doc){
+    res.locals.doc = doc;
+    res.locals.name = req.session.name;
+    res.render('users/detail');
+  });
+});
 
 //首頁
 router.get('/index', function(req, res, next) {
