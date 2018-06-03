@@ -33,7 +33,7 @@
     <header>
     </header>
     <div class="ui grey fixed inverted menu">
-        
+        <% if(username) {%>
             <div class="ui container">
                 <a href="#" class="header item">
     <img class="user icon" src="<%=usericon%>">
@@ -41,9 +41,10 @@
                 <a href="/users/userinfo" class="item">userinfo</a>
                 <a href="/" class="item">index</a>
                 <a href="/users/signout" class="ui teal button right header item">logout</a>
-                
-                    
-                    
+                <%}else{%>
+                    <a href="/users/signin" class="ui teal button right header item">login</a>
+                    <a href="/users/register" class="ui teal button right header item">register</a>
+                    <%}%>
             </div>
     </div>
     <div class="ui internally celled grid">
