@@ -610,7 +610,7 @@ router.get('/category',function(req, res, next){
 
 // 文章內容
  router.get('/detail',function(req, res, next){
-   if ((!req.body.user) || (!req.body.passwd)) {
+   if ((!req.query.id)) {
      console.log('資料不完整')
     res.json({
        error : true
