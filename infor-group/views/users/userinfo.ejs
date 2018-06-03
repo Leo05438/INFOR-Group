@@ -35,7 +35,7 @@
       <tr><td><a href="/users/changePasswd">更改密碼</a></td></tr>
     <%}%>
     <%}%>
-    <tr><td><img src="<%= icon %>" alt=""></td></tr>
+    <tr><td><img class="ui image" src="<%=icon%>" height="70px" width="80px" ></td></tr>
     <tr><td><p>簡介：<%= brief %></p></td><td><a href="/users/editBrief">編輯簡介</a></td></tr>
     <%if(sessUsername == username){%>
       <form class="" action="/apis/editIcon" method="post" enctype="multipart/form-data">

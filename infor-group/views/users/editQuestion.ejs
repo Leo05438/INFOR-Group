@@ -13,20 +13,14 @@
         </div>
         <div>
             <label>最新消息內容</label>
-            <textarea name="content" id="newQContent">
-              <%- content %>
-            </textarea>
+            <textarea name="content" id="newQContent" value=<%= content %>></textarea>
         </div>
             <button type="submit">發佈</button>
     </form>
   </body>
   <script src="/assets/ckeditor/ckeditor.js"></script>
   <script>
-    CKEDITOR.plugins.addExternal("codesnippet", "https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.7.3/plugins/codesnippet/plugin.js", "");
-    CKEDITOR.replace("newQContent", {
-    extraPlugins: "codesnippet",
-    codeSnippet_theme: "monokai_sublime"
-    });
+      CKEDITOR.replace( 'newQContent' );
   </script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/6.6.9/sweetalert2.min.js"></script>
   <script src="/assets/js/newannjs"></script>

@@ -5,6 +5,7 @@ module.exports=function(io){
 	var moment=require("moment")
 	var mongoose=require('mongoose');
 	var Questions = mongoose.model('Question');
+	var QuestionN = mongoose.model('QuestionN')
 	io.on('connection',function(socket){ 
 		console.log("a user jizzing")
 		var sessionstring= socket.request.headers.cookie
@@ -100,6 +101,29 @@ module.exports=function(io){
 				}
 			})*/
 			io.emit("removecontent4")
+		})
+		socket.on("addquestion",function(){
+			setTimeout(function(){
+				QuestionN.find().lean().exec(function(e,docs){
+				Questions.findOne({id:docs[0].times},function(err,doc){
+					if(err){
+						console.log("nonojizz")
+					}else{
+						console.log(docs)
+						console.log(doc)
+						io.emit("addquestion",doc.name,doc.title,doc.content,doc.time,doc.id,doc.icon)
+					}
+				})
+			})},1000)
+
+			
+			
+		})
+		socket.on("removequestion",function(index,eid){
+			Questions.deleteOne({ id : eid },function(err){
+			if(err) return handleError(err);
+			})
+			io.emit("removequestion",index)
 		})
 		
 	})

@@ -527,7 +527,7 @@ router.post('/editQuestion',function(req,res,next){
 });
 
 //建立分類(預設)
-router.get('/createCategoryO',function(req, res, next){
+router.get('/createCategory',function(req, res, next){
   Categories.find().lean().exec(function(e,docs){
     console.log(docs);
     res.json({
@@ -608,22 +608,21 @@ router.get('/category',function(req, res, next){
   }
 });
 
-//文章內容(query.id)
-router.get('/detail',function(req, res, next){
-  if (!req.query.id) {
-    console.log('資料不完整')
-    res.json({
-      error : true
-    });
-    return;
-  }
-  Questions.findOne({id:req.query.id},function(e,doc){
-    res.json({
-      doc : doc
-    });
-    return;
-  });
-});
+// 文章內容
+// router.get('/detail',function(req, res, next){
+//   if ((!req.body.user) || (!req.body.passwd)) {
+//     console.log('資料不完整')
+//     res.json({
+//       error : true
+//     });
+//     return;
+//   }
+//   Questions.findOne({id:req.query.id},function(e,doc){
+//     res.locals.doc = doc;
+//     res.locals.name = req.session.name;
+//     res.render('users/detail');
+//   });
+// });
 
 //首頁
 router.get('/index', function(req, res, next) {
@@ -635,24 +634,5 @@ router.get('/index', function(req, res, next) {
     });
   });
 });
-
-//所有用戶
-// router.get('/userlist', function(req, res, next) {
-//   Users.find().lean().exec(function(e,docs){
-//     var index = 0;
-//     var total = docs.length;
-//     var arr = [{username,id,brief,icon}];
-//     console.log(docs[index].username);
-//     for ( index ; index < total ; index++ ) {
-//       arr[index].username = docs[index].username;
-//       arr[index].id= docs[index].id;
-//       arr[index].brief= docs[index].brief;
-//       arr[index].icon= docs[index].icon;
-//     }
-//     res.json({
-//       docs : docs,
-//     });
-//   });
-// });
 
 module.exports = router;

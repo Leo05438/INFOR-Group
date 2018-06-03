@@ -211,6 +211,7 @@ router.get('/category',function(req, res, next){
       res.locals.i = 0;
       res.locals.category = req.query.index;
       res.locals.name = req.session.name;
+      res.locals.questionicon=docs.icon
       Users.findOne({username:req.session.name},function(err,doc){
         res.locals.usericon=doc.icon
         res.render( 'users/category');
