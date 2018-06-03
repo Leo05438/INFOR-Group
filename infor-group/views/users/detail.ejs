@@ -22,6 +22,11 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>留言板模板</title>
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.0/semantic.min.css"></link>
+    <style type="text/css">
+    body {
+      background-color: #F5F5DC;
+    }
+  </style>
 </head>
 
 <body>
@@ -33,12 +38,12 @@
                 <a href="#" class="header item">
     <img class="user icon" src="<%=usericon%>">
   </a>
-                <a href="/users/userinfo?name=<%=username%>" class="item">userinfo</a>
+                <a href="/users/userinfo" class="item">userinfo</a>
                 <a href="/" class="item">index</a>
-                <button href="/users/signout" class="ui teal button right header item">logout</button>
+                <a href="/users/signout" class="ui teal button right header item">logout</a>
                 <%}else{%>
-                    <button href="/users/signin" class="ui teal button right header item">login</button>
-                    <button href="/users/register" class="ui teal button right header item">register</button>
+                    <a href="/users/signin" class="ui teal button right header item">login</a>
+                    <a href="/users/register" class="ui teal button right header item">register</a>
                     <%}%>
             </div>
     </div>
@@ -92,7 +97,7 @@
                                             <div class="text">
                                                 {{msg.title}}
                                             </div>
-                                            <div v-if="msg.name == <%=username%>">
+                                            <div v-if="msg.name == '<%=username%>'">
                                                 <div class="actions">
                                                     <a @click="removecontent3(index,msg.id)">delete</a>
                                                 </div>
@@ -136,7 +141,7 @@
                             <button @click="noeditcontent1(index)" class="ui red button">取消</button>
                                 <br><br><br>          
                         </span>
-                            <div v-if="content.name==<%=username%>">
+                            <div v-if="content.name=='<%=username%>'">
                                 <div class="actions">
                                     <a @click="removecontent1(index,content.id)">delete</a>
                                     <a @click="editsee(index)">edit</a>

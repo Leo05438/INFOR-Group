@@ -13,12 +13,12 @@
                 <a href="#" class="header item">
     <img class="user icon" src="<%=icon%>">
   </a>
-                <a href="/users/userinfo?name=<%=username%>" class="item">userinfo</a>
+                <a href="/users/userinfo" class="item">userinfo</a>
                 <a href="/" class="item">index</a>
-                <button href="/users/signout" class="ui teal button right header item">logout</button>
+                <a href="/users/signout" class="ui teal button right header item">logout</a>
                 <%}else{%>
-                    <button href="/users/signin" class="ui teal button right header item">login</button>
-                    <button href="/users/register" class="ui teal button right header item">register</button>
+                    <a href="/users/signin" class="ui teal button right header item">login</a>
+                    <a href="/users/register" class="ui teal button right header item">register</a>
                     <%}%>
             </div>
     </div>

@@ -3,20 +3,64 @@
   <head>
     <meta charset="utf-8">
     <title></title>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.0/semantic.min.css"></link>
+    <style type="text/css">
+    body {
+      background-color: #DADADA;
+    }
+    body > .grid {
+      height: 100%;
+    }
+    .image {
+      margin-top: -100px;
+    }
+    .column {
+      max-width: 450px;
+    }
+  </style>
   </head>
   <body>
-    <form class="" action="/apis/loginr" method="post">
-      <input type="text" name="user" placeholder='使用者名稱'>
-      <input type="password" name="passwd" placeholder='密碼'>
-      <% if(rlErro == 1){
+    <div class="ui middle aligned center aligned grid">
+  <div class="column">
+    <h2 class="ui teal image header">
+      
+      <div class="content">
+        Sigh-up a new account
+      </div>
+    </h2>
+    <form class="ui large form" action="/apis/loginr" method="post">
+      <div class="ui stacked segment">
+        <div class="field">
+          <div class="ui left icon input">
+            <i class="user icon"></i>
+            <input type="text" name="user" placeholder='使用者名稱'>
+          </div>
+        </div>
+        <div class="field">
+          <div class="ui left icon input">
+            <i class="lock icon"></i>
+            <input type="password" name="passwd" placeholder='密碼'>
+          </div>
+        </div>
+        <% if(rlErro == 1){
         if(rlErroType == 1){ %><p>資料不完整，請重新輸入</p><% }
         if(rlErroType == 2){ %><p>名稱已被使用，改一個吧</p><% }
         if(rlErroType == 3){ %><p>密碼錯誤，請先註冊</p><% }
         if(rlErroType == 4){ %><p>名稱不存在，請先註冊</p><% }
       } %>
-      <input type="submit" name="submit" value="註冊">
+        <input class="ui fluid large teal submit button" type="submit" name="submit" value="註冊">
+      </div>
+  
+      <div class="ui error message"></div>
+
     </form>
-    <a href="/">主頁</a>
-    <a href="/users/signin">登入</a>
+
+    <div class="ui message">
+     <a href="/">主頁</a>
+     <a href="/users/signin">登入</a>
+    </div>
+  </div>
+</div>
+
   </body>
 </html>

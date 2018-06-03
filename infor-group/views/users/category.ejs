@@ -5,6 +5,11 @@
     <title></title>
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.0/semantic.min.css"></link>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <style type="text/css">
+    body {
+      background-color:  #F5F5DC;
+    }
+  </style>
   </head>
   <body>
     <!--<div class="ui  mini grey  vertical  left visible sidebar menu"> 
@@ -25,12 +30,12 @@
                 <a href="#" class="header item">
     <img class="user icon" src="<%=usericon%>">
   </a>
-                <a href="/users/userinfo?name=<%=name%>" class="item">userinfo</a>
+                <a href="/users/userinfo" class="item">userinfo</a>
                 <a href="/" class="item">index</a>
-                <button href="/users/signout" class="ui teal button right header item">logout</button>
+                <a href="/users/signout" class="ui teal button right header item">logout</a>
                 <%}else{%>
-                    <button href="/users/signin" class="ui teal button right header item">login</button>
-                    <button href="/users/register" class="ui teal button right header item">register</button>
+                    <a href="/users/signin" class="ui teal button right header item">login</a>
+                    <a href="/users/register" class="ui teal button right header item">register</a>
                     <%}%>
             </div>
     </div>
@@ -57,7 +62,7 @@
              </div>
            
                <div style="font-size:20px" class="restrict" v-html="content.content"></div> 
-                        <div v-if="<%=name%>==content.name">
+                        <div v-if="'<%=name%>'==content.name">
               <div class="actions">
                   <button v-bind:href="'/users/editQuestion?id='+content.id" class="ui teal basic button">edit</button>
                   <button type="button" @click="removequestion(index,content.id)" class="mini ui negative basic button">delete</button>
@@ -120,7 +125,7 @@
         },
         methods:{
           init:function(_id,na,titl,content,time,icon){
-              this.newcontentid++;
+              this.newcontentid++
               this.contents.push({
                   id:_id,
                   name:na,
@@ -129,6 +134,7 @@
                   time:time,
                   icon:icon
               })
+              console.log(this.contents[this.newcontentid - 1])
           },
           removequestion:function(index,eid){
             console.log(eid)
@@ -138,7 +144,7 @@
       })
       <%for(i;i<length;i++){%>
 
-ab.init("<%=arr[i].id%>","<%=arr[i].name%>","<%=arr[i].title%>","<%-arr[i].content.replace(/(?:\\[rn]|[\r\n]+)+/g, "");%>","<%=arr[i].created%>","<%=arr[i].icon%>")
+ab.init(<%=arr[i].id%>,"<%=arr[i].name%>","<%=arr[i].title%>","<%-arr[i].content.replace(/(?:\\[rn]|[\r\n]+)+/g, "");%>","<%=arr[i].created%>","<%=arr[i].icon%>")
         <%}%>
     </script>
   </body>

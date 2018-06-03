@@ -3,26 +3,85 @@
   <head>
     <meta charset="utf-8">
     <title></title>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.0/semantic.min.css"></link>
+    <style type="text/css">
+    body {
+      background-color: #F5F5DC;
+    }
+    body > .grid {
+      height: 100%;
+    }
+    .image {
+      margin-top: -100px;
+    }
+    .column {
+      max-width: 350px;
+    }
+
+  </style>
+
   </head>
   <body>
     <% if (username && authenticated) { %>
-      <a href="/users/userinfo">帳號管理</a>
-      <a href="/users/signout">登出</a>
-      <a href="/users/createCategory">建立分類</a>
-    <% } else { %>
-      <a href="/users/signin">登入</a>
-      <a href="/users/register">註冊</a>
-    <% } %>
-
-    <div>
-      <% if (username && authenticated) { %>
-        <% for(i ; i < length ; i++){ %>
-          <div>
-            <a href="/users/category?index=<%= arr[i].index %>"><%=arr[i].index%></a>
-          </div>
-        <% } %>
-      <% } %>
+    <div class="ui grey fixed inverted menu">
+        
+            <div class="ui container">
+                <a href="#" class="header item">
+    <img class="user icon" src="<%=usericon%>">
+  </a>
+                <a href="/users/userinfo" class="item">userinfo</a>
+                <a href="/" class="item">index</a>
+                <a href="/users/signout" class="ui teal button right header item">logout</a>
+            </div>
     </div>
+  <div class="ui internally centered celled grid">
+       <table class="ui very basic fixed collapsing celled  table ">
+        <tbody>
+
+        <tr>
+          <td></td><td>
+        <div class="ten wide column">
+          <div class="ui large comments">
+                
+          <a href="/users/createCategory" style="font-size: 50px;">建立分類</a>
+        </td>
+      </td><td></tr>
+          <% for(i ; i < length ; i++){ %>
+          <tr>
+            <td></td><td class="center aligned">
+          <div>
+            <a href="/users/category?index=<%= arr[i].index %>" style="font-size: 50px"><%=arr[i].index%></a>
+          </div>
+        </td>
+      </td><td></tr>
+        <% } %>
+        </div>
+      </div>
+        
+      </tbody>
+      </table>
+    <% } else { %>
+    <div class="ui middle aligned center aligned grid">
+  <div class="column">
+    <h2 class="ui teal image header">
+      <div class="content" >
+        <p style="font-size: 50px">INFOR-group</p>
+      </div>
+    </h2>
+    <form class="ui large form">
+      <div class="ui stacked segment">
+        
+        <a href="/users/signin" class="ui fluid large teal submit button">Login</a>
+        <br>
+        <a href="/users/register" class="ui fluid large teal submit button">sign up</a>
+      </div>
+
+      <div class="ui error message"></div>
+
+    </form>
+  </div>
+</div>
+    <% } %>
 
   </body>
 </html>
