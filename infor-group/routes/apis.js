@@ -41,7 +41,8 @@ router.post('/loginr', function(req, res, next) {
               username: req.session.name,
               passwd: req.session.passwd,
               id: total+1,
-              brief: "我討厭LL"
+              brief: "我討厭LL",
+              icon:"/upload/1527943384479.jpeg"
           }).save( function( err ){
               if (err) {
                   console.log('Fail to save to DB.');
