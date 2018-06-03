@@ -24,7 +24,7 @@ module.exports=function(io){
 			})
 			//broadcast.emit('chat message',content)
 			console.log(newObjectId)
-			io.emit('addcontent1',msg,newObjectId,name,icon);
+			io.emit('addcontent1',msg,name,newObjectId,icon);
 			//socket.broadcast.emit('addcontent',content);
 			
 		})
