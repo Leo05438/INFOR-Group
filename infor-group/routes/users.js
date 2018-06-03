@@ -119,6 +119,7 @@ router.get('/addQuestion',function(req, res, next){
     res.redirect('/');
     return;
   }
+  res.locals.name=req.session.name
   res.locals.category = req.query.category;
   res.render('users/addQuestion');
 });

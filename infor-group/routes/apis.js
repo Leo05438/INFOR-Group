@@ -199,7 +199,7 @@ router.post('/upload', upload.single('upload'), function(req, res, next) {
 
 //更改密碼
 router.post('/changePasswd',function(req, res, next){
-  if (!req.session.logined) {
+  if ((!req.session.logined)||(!req.body.passwd) ){
     res.redirect('/');
     return;
   }
@@ -243,7 +243,7 @@ router.post('/editQuestion',function(req,res,next){
 
 //編輯簡介
 router.post('/editBrief',function(req, res, next){
-  if (!req.session.logined) {
+  if ((!req.session.logined)||(!req.body.brief)) {
     res.redirect('/');
     return;
   }
